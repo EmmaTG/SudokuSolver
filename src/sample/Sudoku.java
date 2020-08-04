@@ -5,7 +5,9 @@ import java.util.function.BiConsumer;
 
 public class Sudoku {
 
+    private static int emptyPos = 81;
     private List<List<Cell>> puzzleGrid;
+    private List<List<Integer>> unsolvedGrid;
     private List<Integer> numbers = new ArrayList<Integer>(Arrays.asList(1,2,3,4,5,6,7,8,9));
     private final Map<List<Integer>, Integer> boxes = new HashMap<>();
     private Map<Integer, List<Cell>> boxToCell = new HashMap<>();
@@ -13,10 +15,13 @@ public class Sudoku {
 
     public Sudoku() {
         this.puzzleGrid = new ArrayList<>();
+        this.unsolvedGrid = new ArrayList<>();
         createBox();
         for (int i=0; i<9; i++) {
+            unsolvedGrid.add(new ArrayList<>());
             List<Cell> cellColumns = new ArrayList<>();
             for (int j = 0; j < 9; j++) {
+                unsolvedGrid.get(i).add(0);
                 List<Integer> cellIndex = Arrays.asList(i,j);
                 int value = 0;
                 Cell newCell = new Cell(i,j,boxes.get(cellIndex),value);
@@ -44,18 +49,25 @@ public class Sudoku {
 
     public void setCellValue(int row, int column, int value){
         Cell cell = getCell(row,column);
+        List<Integer> unsolvedRow = unsolvedGrid.get(row);
         if (value>0 && value<10) {
             if (cell.getMarkUps().contains(value)){
                 cell.setValue(value);
+                unsolvedRow.set(column,value);
+                emptyPos--;
                 setMarkups();
                 return;
             }
-            System.out.println("Value cannot be added");
+            if (cell.getValue()!= value){
+            System.out.println(String.format("Error with value %d in row %d and column %d",value,row,column));
+
+            }
 
         } else {
             System.out.println("Number must be between 1 and 9");
             cell.setValue(0);
         }
+//        System.out.println("Empty positions: " + emptyPos);
     }
 
     public List<Cell> getRow(int row){
@@ -74,7 +86,7 @@ public class Sudoku {
         return boxToCell.get(box);
     }
 
-    private void setMarkups(){
+    public void setMarkups(){
         for (List<Cell> lst: this.puzzleGrid){
             for (Cell c : lst){
                 setCellMarkups(c);
@@ -95,39 +107,92 @@ public class Sudoku {
         }
         if (markup.size()==1){
             c.setValue(markup.get(0));
+            emptyPos--;
             markup.clear();
-            System.out.println("Automatic markup added at row: " + c.getRow() + " and column: " + c.getColumn());
+//            System.out.println("Automatic markup added at row: " + c.getRow() + " and column: " + c.getColumn());
             setMarkups();
         }
-
         c.setMarkUps(markup);
     }
 
-    public void check(){
-        for (int i=0;i<9;i++) {
-            List<Integer> checkRow = checkRow(i);
-            if (!checkRow.isEmpty()){
-                System.out.println("Check Row result:");
-                System.out.println("Row: " + i + " Column: " + checkRow.get(0));
-                System.out.println("Value: " + checkRow.get(1));
-                System.out.println();
+    private void updateSelectMarkers(int row, int col, int box){
+        updateRowMarkups(row);
+        updateColumnMarkups(col);
+        updateBoxesMarkups(box);
+    }
+
+    private void updateRowMarkups(int row){
+            for (Cell c : getRow(row)){
+                setCellMarkups(c);
             }
-            List<Integer> checkColumn = checkColumn(i);
-            if (!checkColumn.isEmpty()){
-                System.out.println("Check Column result:");
-                System.out.println("Row: " + checkColumn.get(0) + " Column: " + i);
-                System.out.println("Value: " + checkColumn.get(1));
-                System.out.println();
-            }
-            List<Integer> checkBoxes = checkBoxes(i);
-            if (!checkBoxes.isEmpty()){
-                System.out.println("Check Boxes result:");
-                System.out.println("Row: " + checkBoxes.get(0) + " Column: " + checkBoxes.get(1));
-                System.out.println("Value: " + checkBoxes.get(2));
-                System.out.println();
-            }
+    }
+
+    private void updateColumnMarkups(int column){
+        for (Cell c : getColumn(column)){
+            setCellMarkups(c);
         }
     }
+
+    private void updateBoxesMarkups(int box){
+        for (Cell c : getBox(box)){
+            setCellMarkups(c);
+        }
+    }
+
+    public boolean check(){
+        if (emptyPos>0) {
+            boolean updated = false;
+            int row, column, box, value;
+            for (int i = 0; i < 9; i++) {
+                List<Integer> checkRow = checkRow(i);
+                if (!checkRow.isEmpty()) {
+                    row = i;
+                    column = checkRow.get(0);
+                    value = checkRow.get(1);
+                    box = getCell(row, column).getBox();
+                    puzzleGrid.get(row).get(column).setValue(value);
+                    emptyPos--;
+                    updateSelectMarkers(row, column, box);
+//                stringCheckResult(row,column,value);
+                    updated = true;
+                }
+                List<Integer> checkColumn = checkColumn(i);
+                if (!checkColumn.isEmpty()) {
+                    row = checkColumn.get(0);
+                    column = i;
+                    value = checkColumn.get(1);
+                    box = getCell(row, column).getBox();
+                    puzzleGrid.get(row).get(column).setValue(value);
+                    emptyPos--;
+                    updateSelectMarkers(row, column, box);
+//                stringCheckResult(row,column,value);
+                    updated = true;
+                }
+                List<Integer> checkBoxes = checkBoxes(i);
+                if (!checkBoxes.isEmpty()) {
+                    row = checkBoxes.get(0);
+                    column = checkBoxes.get(1);
+                    value = checkBoxes.get(2);
+                    box = i + 1;
+                    puzzleGrid.get(row).get(column).setValue(value);
+                    emptyPos--;
+                    updateSelectMarkers(row, column, box);
+//                stringCheckResult(row,column,value);
+                    updated = true;
+                }
+            }
+            return updated;
+        }
+        System.out.println("Sudoku solved!!");
+        return false;
+    }
+
+    private void stringCheckResult(int row, int col,int value){
+        System.out.println("Check Row result:");
+        System.out.println("Row: " + row + " Column: " + col);
+        System.out.println("Value: " + value);
+    }
+
     public List<Integer> checkRow(int number){
         List<Cell> listOfRows;
         List<Integer> occurAndCol;
@@ -257,6 +322,10 @@ public class Sudoku {
         return boxToCell;
     }
 
+    public static int getEmptyPos() {
+        return emptyPos;
+    }
+
     private void createBox(){
         for (int k = 0; k < 9; k= k+3) {
             for (int firstIndex=k;firstIndex<k+3;firstIndex++){
@@ -284,6 +353,9 @@ public class Sudoku {
 
     @Override
     public String toString() {
+        if (emptyPos==0) {
+            System.out.println(unsolved());
+        }
         String hLine = "\t-----------------------------------\n";
         StringBuilder sb = new StringBuilder();
         sb.append("\t0\t1\t2\t3\t4\t5\t6\t7\t8\n");
@@ -296,6 +368,38 @@ public class Sudoku {
             int vertLine =0;
             for (Cell c: lst){
                 sb.append(c.getValue());
+                vertLine++;
+                if (vertLine==3){
+                    sb.append("|");
+                    vertLine = 0;
+                }
+                sb.append("\t");
+            }
+
+            sb.append("\n");
+            count++;
+            horizonLine++;
+            if (horizonLine==3){
+                sb.append(hLine);
+                horizonLine = 0;
+            }
+        }
+        return sb.toString();
+    }
+
+    public String unsolved() {
+        String hLine = "\t-----------------------------------\n";
+        StringBuilder sb = new StringBuilder();
+        sb.append("\t0\t1\t2\t3\t4\t5\t6\t7\t8\n");
+        sb.append(hLine);
+        int count =0;
+        int horizonLine =0;
+        for (List<Integer> lst : this.unsolvedGrid){
+            sb.append(count);
+            sb.append("\t|");
+            int vertLine =0;
+            for (int i: lst){
+                sb.append(i);
                 vertLine++;
                 if (vertLine==3){
                     sb.append("|");

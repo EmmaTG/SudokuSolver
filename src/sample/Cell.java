@@ -43,6 +43,9 @@ public class Cell {
     }
 
     public void setValue(int value) {
+        if (this.getValue()== value){
+            System.out.println("Replacing " + this.value + " with " + value);
+        }
         this.value = value;
     }
 
