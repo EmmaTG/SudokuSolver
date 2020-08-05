@@ -1,18 +1,28 @@
-package sample;
+package sudokuSolver;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-
-import javax.sound.midi.Soundbank;
+import sudokuSolver.Controller.Controller;
+import sudokuSolver.Model.Sudoku;
+import sudokuSolver.View.SudokuView;
 
 public class Main extends Application {
+    private static int emptyPositions = Sudoku.getEmptyPos();
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-//        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
+        SudokuView sudokuView = new SudokuView();
+        Controller controller = new Controller(sudokuView);
+//        GridPane gridPane = sudokuView.getGridPane();
+//        Scene scene = new Scene(gridPane);
+        BorderPane borderPane = sudokuView.getBorderPane();
+        Scene scene = new Scene(borderPane);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+//        Parent root = FXMLLoader.load(getClass().getResource("sudokuSolver.fxml"));
 //        primaryStage.setTitle("Hello World");
 //        primaryStage.setScene(new Scene(root, 300, 275));
 //        primaryStage.show();
@@ -21,32 +31,32 @@ public class Main extends Application {
 
     public static void main(String[] args) {
 //        launch(args);
-        Sudoku sudoku = hardSudoku();
+        Sudoku sudoku = expertSudoku();
+        System.out.println(sudoku.toString());
 
-        System.out.println(sudoku.unsolved());
-//        System.out.println(sudoku.toString());
+        System.out.println("Place finding method");
+        sudoku.placeFinding();
+        updateString();
+        System.out.println(sudoku.toString());
 
-//        System.out.println(sudoku.getMarkups(8,4));
-//        System.out.println(sudoku.numberAllowed(1,1,8));
-//        System.out.println(sudoku.getPuzzleGrid().get(0).get(8).toString());
-//        System.out.println(sudoku.getMarkups(0,7));
+        System.out.println("Candidate checking method");
         int count = 1;
-        int emptyPositions = Sudoku.getEmptyPos();
-        while(sudoku.check()){
-            int changeInValues = (emptyPositions-Sudoku.getEmptyPos());
-            System.out.println("Iteration: " + count);
-            System.out.println(changeInValues + (changeInValues==1 ? " value added" :  " values added"));
-            System.out.println("Empty positions remaining: " + Sudoku.getEmptyPos());
-            emptyPositions = Sudoku.getEmptyPos();
+        while(sudoku.candidateCheck() && count<20){
+            updateString();
             count++;
             System.out.println(sudoku.toString());
-            if (count>20){
-                break;
-            }
         };
-        System.out.println(sudoku.toString());
-//        System.out.println(sudoku.getMarkups(0,7));
 
+
+        sudoku.simpleSolve();
+
+    }
+
+    public static void updateString(){
+        int changeInValues = (emptyPositions-Sudoku.getEmptyPos());
+        System.out.println(changeInValues + (changeInValues==1 ? " value added" :  " values added"));
+        System.out.println("Empty positions remaining: " + Sudoku.getEmptyPos());
+        emptyPositions = Sudoku.getEmptyPos();
     }
 
     public static Sudoku easySudoku(){

@@ -1,4 +1,4 @@
-package sample;
+package sudokuSolver.Model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,9 +43,9 @@ public class Cell {
     }
 
     public void setValue(int value) {
-        if (this.getValue()== value){
-            System.out.println("Replacing " + this.value + " with " + value);
-        }
+//        if (this.getValue()== value){
+//            System.out.println("Replacing " + this.value + " with " + value);
+//        }
         this.value = value;
     }
 
@@ -56,7 +56,7 @@ public class Cell {
                 ", column=" + column +
                 ", box=" + box +
                 ", \nvalue=" + value +
-                ", \nmarkUps=" + markUps +
+                ", markUps=" + markUps +
                 '}';
     }
 }
