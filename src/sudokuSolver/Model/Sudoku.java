@@ -1,20 +1,19 @@
 package sudokuSolver.Model;
 
-import sudokuSolver.Model.Cell;
-
 import java.util.*;
 
 public class Sudoku {
 
-    private static int emptyPos = 81;
+    private int emptyPos;
     private List<List<Cell>> puzzleGrid;
     private List<List<Integer>> unsolvedGrid;
-    private List<Integer> numbers = new ArrayList<Integer>(Arrays.asList(1,2,3,4,5,6,7,8,9));
+    private List<Integer> numbers = new ArrayList<>(Arrays.asList(1,2,3,4,5,6,7,8,9));
     private final Map<List<Integer>, Integer> boxes = new HashMap<>();
     private Map<Integer, List<Cell>> boxToCell = new HashMap<>();
 
 
     public Sudoku() {
+        this.emptyPos=81;
         this.puzzleGrid = new ArrayList<>();
         this.unsolvedGrid = new ArrayList<>();
         createBox();
@@ -44,16 +43,53 @@ public class Sudoku {
         }
     }
 
-    public boolean numberAllowed(int row, int column,int number){
+    public boolean solve(Map<List<Integer>, Integer> filledValues){
+        int row,col,val;
+        for (Map.Entry<List<Integer>,Integer> entry : filledValues.entrySet()){
+            row = entry.getKey().get(0);
+            col = entry.getKey().get(1);
+            val = entry.getValue();
+            this.setCellValue(row,col,val);
+        }
+        this.placeFinding();
+
+        int count = 1;
+        while(this.candidateCheck() && count<20){
+            count++;
+        }
+
+        return this.simpleSolve();
+    }
+
+    public Map<List<Integer>, Integer> solvedValues(){
+        List<Cell> lst;
+        List<Integer> unsLst;
+        int row,col,val;
+        Cell c;
+        Map<List<Integer>, Integer> values = new HashMap<>();
+        for (int i=0; i<this.puzzleGrid.size();i++){
+            lst = this.puzzleGrid.get(i);
+            unsLst = this.unsolvedGrid.get(i);
+            for (int j=0;j<lst.size();j++){
+                if (unsLst.get(j)==0){
+                    c = lst.get(j);
+                    row = c.getRow();
+                    col = c.getColumn();
+                    val = c.getValue();
+                    values.put(Arrays.asList(row,col),val);
+                }
+            }
+        }
+        return values;
+    }
+
+
+    private boolean numberAllowed(int row, int column,int number){
         return getCell(row, column).getMarkUps().contains(number);
     }
 
-    public Cell getCell(int row, int column){
+    private Cell getCell(int row, int column){
         return puzzleGrid.get(row).get(column);
-    }
-
-    public int getCellValue(int row, int column){
-        return getCell(row,column).getValue();
     }
 
     public void setCellValue(int row, int column, int value){
@@ -64,7 +100,6 @@ public class Sudoku {
                 cell.setValue(value);
                 unsolvedRow.set(column,value);
                 emptyPos--;
-//                placeFinding();
                 return;
             }
             if (cell.getValue()!= value){
@@ -76,7 +111,6 @@ public class Sudoku {
             System.out.println("Number must be between 1 and 9");
             cell.setValue(0);
         }
-//        System.out.println("Empty positions: " + emptyPos);
     }
 
     private List<Cell> getRow(int row){
@@ -95,7 +129,11 @@ public class Sudoku {
         return boxToCell.get(box);
     }
 
-    public void placeFinding(){
+    public int getEmptyPos() {
+        return emptyPos;
+    }
+
+    private void placeFinding(){
         for (List<Cell> lst: this.puzzleGrid){
             for (Cell c : lst){
                 setCellMarkups(c);
@@ -124,7 +162,7 @@ public class Sudoku {
         c.setMarkUps(markup);
     }
 
-    public boolean candidateCheck(){
+    private boolean candidateCheck(){
         if (emptyPos>0) {
             boolean updated = false;
             int row, column, box, value;
@@ -195,12 +233,6 @@ public class Sudoku {
         for (Cell c : getBox(box)){
             setCellMarkups(c);
         }
-    }
-
-    private void stringCheckResult(int row, int col,int value){
-        System.out.println("Check Row result:");
-        System.out.println("Row: " + row + " Column: " + col);
-        System.out.println("Value: " + value);
     }
 
     private List<Integer> checkRow(int number){
@@ -282,16 +314,16 @@ public class Sudoku {
         return numAndLoc;
     }
 
-    public void simpleSolve() {
-        System.out.println("Using simple solving algorithm");
+    private boolean simpleSolve() {
+//        System.out.println("Simple solving algorithm");
 
         List<Cell> allCells = new ArrayList<>();
         Cell c;
 
         // Create flattened list of all cells with no entry
-        this.puzzleGrid.forEach((lst) -> {
-            lst.stream().filter(cell -> cell.getValue() == 0).forEach((el) -> allCells.add(el));
-        });
+        this.puzzleGrid.forEach((lst) -> lst.stream()
+                .filter(cell -> cell.getValue() == 0)
+                .forEach(allCells::add));
 
         //Iterate through cells in list using a simple trial and error algorithm.
         ListIterator<Cell> iterator = allCells.listIterator();
@@ -316,7 +348,6 @@ public class Sudoku {
                     c = iterator.previous();
                     startVal = c.getValue();
                 } else {
-                    System.out.println("Sudoku unsolveable");
                     break;
                 }
             } else {
@@ -324,19 +355,18 @@ public class Sudoku {
                 startVal = 0;
             }
         }
-        if (emptyPos==0) {
-            System.out.println("\t!!SOLVED!!");
-            System.out.println("Done in " + count + " iterations");
-        } else {
-            System.out.println("Could not solve sudoku");
-            System.out.println(emptyPos + " empty positions remain");
-        }
-        System.out.println(toString());
+        return emptyPos==0;
+//            System.out.println("\t!!SOLVED!!");
+//            System.out.println("Done in " + count + " iterations");
+//            System.out.println(toString());
+//            return true;
+//        }
+//        System.out.println("Could not solve sudoku");
+//        System.out.println(emptyPos + " empty positions remain");
+//        System.out.println(toString());
+//        return false;
     }
 
-    public List<Integer> getMarkups(int row, int column){
-        return getCell(row,column).getMarkUps();
-    }
 
     private boolean sudokuCondition(int number, Cell cell){
         // true if number could go there
@@ -368,26 +398,6 @@ public class Sudoku {
             }
         }
         return true;
-    }
-
-    public List<List<Cell>> getPuzzleGrid() {
-        return puzzleGrid;
-    }
-
-    public List<Integer> getNumbers() {
-        return numbers;
-    }
-
-    public Map<List<Integer>, Integer> getBoxes() {
-        return boxes;
-    }
-
-    public Map<Integer, List<Cell>> getBoxToCell() {
-        return boxToCell;
-    }
-
-    public static int getEmptyPos() {
-        return emptyPos;
     }
 
     private void createBox(){
@@ -448,4 +458,38 @@ public class Sudoku {
         return sb.toString();
     }
 
+
+    public int getCellValue(int row, int column){
+        return getCell(row,column).getValue();
+    }
+
+    public void resetEmptyPos() {
+        this.emptyPos = 81;
+    }
+
+    public List<List<Cell>> getPuzzleGrid() {
+        return puzzleGrid;
+    }
+
+    public List<Integer> getNumbers() {
+        return numbers;
+    }
+
+    public Map<List<Integer>, Integer> getBoxes() {
+        return boxes;
+    }
+
+    public Map<Integer, List<Cell>> getBoxToCell() {
+        return boxToCell;
+    }
+
+
+    private void stringCheckResult(int row, int col,int value){
+        System.out.println("Check Row result:");
+        System.out.println("Row: " + row + " Column: " + col);
+        System.out.println("Value: " + value);
+    }
+    public List<Integer> getMarkups(int row, int column){
+        return getCell(row,column).getMarkUps();
+    }
 }

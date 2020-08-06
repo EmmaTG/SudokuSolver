@@ -3,61 +3,28 @@ package sudokuSolver;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import sudokuSolver.Controller.Controller;
 import sudokuSolver.Model.Sudoku;
 import sudokuSolver.View.SudokuView;
 
 public class Main extends Application {
-    private static int emptyPositions = Sudoku.getEmptyPos();
 
     @Override
     public void start(Stage primaryStage) throws Exception{
         SudokuView sudokuView = new SudokuView();
-        Controller controller = new Controller(sudokuView);
-//        GridPane gridPane = sudokuView.getGridPane();
-//        Scene scene = new Scene(gridPane);
+        new Controller(sudokuView);
         BorderPane borderPane = sudokuView.getBorderPane();
         Scene scene = new Scene(borderPane);
         primaryStage.setScene(scene);
         primaryStage.show();
-//        Parent root = FXMLLoader.load(getClass().getResource("sudokuSolver.fxml"));
-//        primaryStage.setTitle("Hello World");
-//        primaryStage.setScene(new Scene(root, 300, 275));
-//        primaryStage.show();
     }
 
 
     public static void main(String[] args) {
-//        launch(args);
-        Sudoku sudoku = expertSudoku();
-        System.out.println(sudoku.toString());
-
-        System.out.println("Place finding method");
-        sudoku.placeFinding();
-        updateString();
-        System.out.println(sudoku.toString());
-
-        System.out.println("Candidate checking method");
-        int count = 1;
-        while(sudoku.candidateCheck() && count<20){
-            updateString();
-            count++;
-            System.out.println(sudoku.toString());
-        };
-
-
-        sudoku.simpleSolve();
-
+        launch(args);
     }
 
-    public static void updateString(){
-        int changeInValues = (emptyPositions-Sudoku.getEmptyPos());
-        System.out.println(changeInValues + (changeInValues==1 ? " value added" :  " values added"));
-        System.out.println("Empty positions remaining: " + Sudoku.getEmptyPos());
-        emptyPositions = Sudoku.getEmptyPos();
-    }
 
     public static Sudoku easySudoku(){
         Sudoku sudoku = new Sudoku();
