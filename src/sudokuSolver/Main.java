@@ -17,7 +17,11 @@ public class Main extends Application {
         BorderPane borderPane = sudokuView.getBorderPane();
         Scene scene = new Scene(borderPane);
         primaryStage.setScene(scene);
+        primaryStage.setTitle("Sudoku Solver");
         primaryStage.show();
+
+//        Sudoku sudoku = new Sudoku();
+//        sudoku.createSudoku();
     }
 
 

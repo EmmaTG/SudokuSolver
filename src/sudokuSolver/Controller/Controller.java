@@ -16,6 +16,7 @@ public class Controller {
     public Controller(SudokuView sudokuView) {
         this.sudokuView = sudokuView;
         init();
+//        createSudoku();
     }
 
     private void init(){
@@ -32,7 +33,13 @@ public class Controller {
 
         Button clearButton = sudokuView.getClearAllbutton();
         clearButton.setDisable(false);
-        clearButton.setOnAction((e) -> sudokuView.clearAllFields());
+        clearButton.setOnAction((e) -> init());
+        Button createButton = sudokuView.getCreatebutton();
+        createButton.setDisable(false);
+        createButton.setOnAction(e -> {
+            init();
+            createSudoku();
+        });
         Button solveButton = sudokuView.getSolveButton();
         solveButton.setOnAction((e) -> {
             boolean solved = this.sudoku.solve(getValues());
@@ -44,6 +51,7 @@ public class Controller {
                 clearButton.setDisable(true);
                 solveButton.setOnAction((e2) -> init());
             } else {
+                sudoku.toString();
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Unsolvable!");
                 alert.setHeaderText("Sudoku could not be solved.");
@@ -57,6 +65,11 @@ public class Controller {
 
     private Map<List<Integer>, Integer> getValues(){
         return sudokuView.getCellvalues();
+    }
+
+    private void createSudoku(){
+        List<List<Integer>> createdSudoku = sudoku.createSudoku();
+        sudokuView.displaySudoku(createdSudoku);
     }
 
     public void updateString(){

@@ -15,6 +15,7 @@ public class SudokuView {
     private List<TextField> cells = new ArrayList<>();
     private Button solveButton;
     private Button clearAllbutton;
+    private Button createbutton;
     private GridPane gridPane;
     private BorderPane borderPane;
     private static final String ORIGINAL_STYLE = "-fx-text-fill: black; -fx-font-size:20; -fx-text-alignment: center";
@@ -26,6 +27,8 @@ public class SudokuView {
         this.solveButton.setMaxWidth(Double.MAX_VALUE);
         this.clearAllbutton = new Button("Clear all");
         this.clearAllbutton.setMaxWidth(Double.MAX_VALUE);
+        this.createbutton= new Button("Create Sudoku");
+        this.createbutton.setMaxWidth(Double.MAX_VALUE);
         this.gridPane = new GridPane();
         this.borderPane = new BorderPane();
         HBox row;
@@ -48,7 +51,7 @@ public class SudokuView {
 
         this.borderPane.setCenter(this.gridPane);
 
-        VBox buttonBox = new VBox(solveButton,clearAllbutton);
+        VBox buttonBox = new VBox(solveButton,clearAllbutton,createbutton);
         buttonBox.setAlignment(Pos.CENTER);
         this.borderPane.setRight(buttonBox);
     }
@@ -88,6 +91,10 @@ public class SudokuView {
         return clearAllbutton;
     }
 
+    public Button getCreatebutton() {
+        return createbutton;
+    }
+
     public BorderPane getBorderPane() {
         return borderPane;
     }
@@ -104,6 +111,20 @@ public class SudokuView {
             }
         });
         return locAndValues;
+    }
+
+
+    public void displaySudoku(List<List<Integer>> values){
+        for (int i=0; i<9;i++){
+            for (int j=0;j<9;j++){
+                int val = values.get(i).get(j);
+                if (val!=0) {
+                    int idx = i * 9 + j;
+                    this.cells.get(idx).setText(String.valueOf(val));
+                }
+            }
+        }
+
     }
 
     private TextField getCell(){
