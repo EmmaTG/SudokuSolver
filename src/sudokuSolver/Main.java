@@ -19,9 +19,6 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle("Sudoku Solver");
         primaryStage.show();
-
-//        Sudoku sudoku = new Sudoku();
-//        sudoku.createSudoku();
     }
 
 
