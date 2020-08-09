@@ -56,11 +56,9 @@ public class Sudoku {
         }
         this.placeFinding();
 
-        System.out.println(toString());
         int count = 1;
         while(this.candidateCheck() && count<20){
             count++;
-            System.out.println(toString());
         }
 
         return this.simpleSolve();
@@ -390,10 +388,11 @@ public class Sudoku {
         initializeMarkups();
 
         fillBoxes();
-        simpleSolve();
+        while (!simpleSolve()){
+            continue;
+        };
 
         removeCells();
-        System.out.println(toString());
 
         List<List<Integer>> values = new ArrayList<>();
         this.puzzleGrid.forEach(lst -> {
@@ -407,19 +406,26 @@ public class Sudoku {
     }
 
     private void removeCells(){
-        int k = 20;
+        int k = 36;
         int count = k;
         Random rand = new Random();
+        List<List<Integer>> positions = new ArrayList<>();
         while (count>0) {
+
             int row = rand.nextInt(9);
             int col = rand.nextInt(9);
-            Cell c = getCell(row, col);
-            if (c.getValue() != 0) {
-//                System.out.println("row: " + row+ ", col: " + col);
-                c.setValue(0);
-                updateSelectMarkers(row,col,c.getBox());
-                emptyPos++;
-                count--;
+            positions.add(Arrays.asList(row,col));
+            positions.add(Arrays.asList(row,8-col));
+            positions.add(Arrays.asList(8-row,col));
+            positions.add(Arrays.asList(8-row,8-col));
+            for (int i=0;i<positions.size();i++) {
+                Cell c = getCell(positions.get(i).get(0), positions.get(i).get(1));
+                if (c.getValue() != 0) {
+                    c.setValue(0);
+                    updateSelectMarkers(row, col, c.getBox());
+                    emptyPos++;
+                    count--;
+                }
             }
         }
 
