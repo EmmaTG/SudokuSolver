@@ -55,21 +55,18 @@ public class Sudoku {
 
         fillBoxes();
 
-        while (!simpleSolve()){
-            continue;
-        };
-
-        removeCells();
-
         List<List<Integer>> values = new ArrayList<>();
-        this.puzzleGrid.forEach(lst -> {
-            List<Integer> rows = new ArrayList<>();
-            lst.forEach(el -> rows.add(el.getValue()));
-            values.add(rows);
-        });
-        this.unsolvedGrid = values;
-        System.out.println(values.size());
+        if (simpleSolve()) {
 
+            removeCells();
+
+            this.puzzleGrid.forEach(lst -> {
+                List<Integer> rows = new ArrayList<>();
+                lst.forEach(el -> rows.add(el.getValue()));
+                values.add(rows);
+            });
+            this.unsolvedGrid = values;
+        }
         return values;
     }
 
@@ -130,8 +127,6 @@ public class Sudoku {
         while(this.candidateCheck() && count<20){
             count++;
         }
-        System.out.println(toString());
-        System.out.println(emptyPos);
         if (this.emptyPos>0){
             return this.simpleSolve();
         } else {
@@ -231,7 +226,6 @@ public class Sudoku {
                 c.setValue(markup.get(0));
                 emptyPos--;
                 markup.clear();
-//            System.out.println("Automatic markup added at row: " + c.getRow() + " and column: " + c.getColumn());
                 placeFinding();
             }
         }
@@ -252,7 +246,6 @@ public class Sudoku {
                     puzzleGrid.get(row).get(column).setValue(value);
                     emptyPos--;
                     updateSelectMarkers(row, column, box);
-//                stringCheckResult(row,column,value);
                     updated = true;
                 }
                 List<Integer> checkColumn = checkColumn(i);
@@ -264,7 +257,6 @@ public class Sudoku {
                     puzzleGrid.get(row).get(column).setValue(value);
                     emptyPos--;
                     updateSelectMarkers(row, column, box);
-//                stringCheckResult(row,column,value);
                     updated = true;
                 }
                 List<Integer> checkBoxes = checkBoxes(i);
@@ -276,13 +268,11 @@ public class Sudoku {
                     puzzleGrid.get(row).get(column).setValue(value);
                     emptyPos--;
                     updateSelectMarkers(row, column, box);
-//                stringCheckResult(row,column,value);
                     updated = true;
                 }
             }
             return updated;
         }
-        System.out.println("Sudoku solved!!");
         return false;
     }
 
@@ -391,7 +381,6 @@ public class Sudoku {
     }
 
     private boolean simpleSolve() {
-//        System.out.println("Simple solving algorithm");
 
         List<Cell> allCells = new ArrayList<>();
         Cell c;
@@ -401,14 +390,11 @@ public class Sudoku {
                 .filter(cell -> cell.getValue() == 0)
                 .forEach(allCells::add));
 
-        System.out.println(allCells.size());
-
         //Iterate through cells in list using a simple trial and error algorithm.
         ListIterator<Cell> iterator = allCells.listIterator();
-        int startVal = 0,count = 0;
+        int startVal = 0;
         boolean valueFound;
-        while (count < 50000 && iterator.hasNext() && emptyPos>0) {
-            count++;
+        while (iterator.hasNext() && emptyPos>0) {
             valueFound = false;
             c = iterator.next();
             for (int i = startVal + 1; i < 10; i++) {
@@ -433,7 +419,6 @@ public class Sudoku {
                 startVal = 0;
             }
         }
-//        System.out.println(count);
         return emptyPos==0;
     }
 

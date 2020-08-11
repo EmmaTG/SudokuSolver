@@ -41,7 +41,6 @@ public class Controller {
         createButton.setOnAction(e -> {
             init();
             createSudoku();
-//            init();
         });
 
         // Set event handler for the "Solve" button
@@ -73,7 +72,14 @@ public class Controller {
 
     private void createSudoku(){
         List<List<Integer>> createdSudoku = sudoku.createSudoku();
-        sudokuView.displaySudoku(createdSudoku);
+        if (!createdSudoku.isEmpty()){
+            sudokuView.displaySudoku(createdSudoku);
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error!");
+            alert.setHeaderText("Error incurred in Sudoku creation.");
+            alert.show();
+        }
     }
 
     public void updateString(){
