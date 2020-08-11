@@ -16,7 +16,6 @@ public class Controller {
     public Controller(SudokuView sudokuView) {
         this.sudokuView = sudokuView;
         init();
-//        createSudoku();
     }
 
     private void init(){
@@ -31,15 +30,21 @@ public class Controller {
 
     private void setEventHandlers(){
 
+        // Set event handler for the "Clear All" button
         Button clearButton = sudokuView.getClearAllbutton();
         clearButton.setDisable(false);
         clearButton.setOnAction((e) -> init());
+
+        // Set event handler for the "Create Sudoku" button
         Button createButton = sudokuView.getCreatebutton();
         createButton.setDisable(false);
         createButton.setOnAction(e -> {
             init();
             createSudoku();
+//            init();
         });
+
+        // Set event handler for the "Solve" button
         Button solveButton = sudokuView.getSolveButton();
         solveButton.setOnAction((e) -> {
             boolean solved = this.sudoku.solve(getValues());
@@ -51,7 +56,6 @@ public class Controller {
                 clearButton.setDisable(true);
                 solveButton.setOnAction((e2) -> init());
             } else {
-                sudoku.toString();
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Unsolvable!");
                 alert.setHeaderText("Sudoku could not be solved.");

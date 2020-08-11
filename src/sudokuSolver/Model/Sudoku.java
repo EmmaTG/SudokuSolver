@@ -11,10 +11,11 @@ public class Sudoku {
     private List<Integer> numbers = new ArrayList<>(Arrays.asList(1,2,3,4,5,6,7,8,9));
     private final Map<List<Integer>, Integer> boxes = new HashMap<>();
     private Map<Integer, List<Cell>> boxToCell = new HashMap<>();
-    private static boolean createMode=false;
+    private boolean createMode;
 
 
     public Sudoku() {
+        this.createMode=false;
         this.emptyPos=81;
         this.puzzleGrid = new ArrayList<>();
         this.unsolvedGrid = new ArrayList<>();
@@ -45,6 +46,75 @@ public class Sudoku {
         }
     }
 
+    public int getEmptyPos() {
+        return emptyPos;
+    }
+
+    public List<List<Integer>> createSudoku() {
+        createMode = true;
+
+        fillBoxes();
+
+        while (!simpleSolve()){
+            continue;
+        };
+
+        removeCells();
+
+        List<List<Integer>> values = new ArrayList<>();
+        this.puzzleGrid.forEach(lst -> {
+            List<Integer> rows = new ArrayList<>();
+            lst.forEach(el -> rows.add(el.getValue()));
+            values.add(rows);
+        });
+        this.unsolvedGrid = values;
+        System.out.println(values.size());
+
+        return values;
+    }
+
+    private void fillBoxes(){
+        Random rand = new Random();
+        for (int boxNo : Arrays.asList(1,5,9)) {
+            List<Cell> boxCells = boxList(boxNo);
+            boxCells.remove(boxCells.size()-1);
+            for (Cell c : boxCells) {
+                int markupsSize = c.getMarkUps().size();
+                int random = rand.nextInt(markupsSize);
+                c.setValue(c.getMarkUps().get(random));
+                updateSelectMarkers(c.getRow(), c.getColumn(), c.getBox());
+                emptyPos--;
+            }
+        }
+    }
+
+
+    private void removeCells(){
+        int k = 36;
+        int count = k;
+        Random rand = new Random();
+        List<List<Integer>> positions = new ArrayList<>();
+        while (count>0) {
+
+            int row = rand.nextInt(9);
+            int col = rand.nextInt(9);
+            positions.add(Arrays.asList(row,col));
+            positions.add(Arrays.asList(row,8-col));
+            positions.add(Arrays.asList(8-row,col));
+            positions.add(Arrays.asList(8-row,8-col));
+            for (int i=0;i<positions.size();i++) {
+                Cell c = getCell(positions.get(i).get(0), positions.get(i).get(1));
+                if (c.getValue() != 0) {
+                    c.setValue(0);
+                    updateSelectMarkers(row, col, c.getBox());
+                    emptyPos++;
+                    count--;
+                }
+            }
+        }
+
+    }
+
     public boolean solve(Map<List<Integer>, Integer> filledValues){
         createMode = false;
         int row,col,val;
@@ -60,8 +130,13 @@ public class Sudoku {
         while(this.candidateCheck() && count<20){
             count++;
         }
-
-        return this.simpleSolve();
+        System.out.println(toString());
+        System.out.println(emptyPos);
+        if (this.emptyPos>0){
+            return this.simpleSolve();
+        } else {
+            return true;
+        }
     }
 
     public Map<List<Integer>, Integer> solvedValues(){
@@ -130,10 +205,6 @@ public class Sudoku {
 
     private List<Cell> getBox(int box){
         return boxToCell.get(box);
-    }
-
-    public int getEmptyPos() {
-        return emptyPos;
     }
 
     private void placeFinding(){
@@ -330,11 +401,13 @@ public class Sudoku {
                 .filter(cell -> cell.getValue() == 0)
                 .forEach(allCells::add));
 
+        System.out.println(allCells.size());
+
         //Iterate through cells in list using a simple trial and error algorithm.
         ListIterator<Cell> iterator = allCells.listIterator();
         int startVal = 0,count = 0;
         boolean valueFound;
-        while (count < 50000 && iterator.hasNext()) {
+        while (count < 50000 && iterator.hasNext() && emptyPos>0) {
             count++;
             valueFound = false;
             c = iterator.next();
@@ -364,86 +437,6 @@ public class Sudoku {
         return emptyPos==0;
     }
 
-    public List<List<Integer>> createSudoku() {
-        createMode = true;
-        this.emptyPos = 81;
-        this.puzzleGrid = new ArrayList<>();
-        this.unsolvedGrid = new ArrayList<>();
-        createBox();
-        for (int i = 0; i < 9; i++) {
-            unsolvedGrid.add(new ArrayList<>());
-            List<Cell> cellColumns = new ArrayList<>();
-            for (int j = 0; j < 9; j++) {
-                int value = 0;
-                unsolvedGrid.get(i).add(value);
-                List<Integer> cellIndex = Arrays.asList(i, j);
-                Cell newCell = new Cell(i, j, boxes.get(cellIndex), value);
-                List<Cell> cellList = boxToCell.getOrDefault(boxes.get(cellIndex), new ArrayList<>());
-                cellList.add(newCell);
-                boxToCell.put(boxes.get(cellIndex), cellList);
-                cellColumns.add(newCell);
-            }
-            this.puzzleGrid.add(cellColumns);
-        }
-        initializeMarkups();
-
-        fillBoxes();
-        while (!simpleSolve()){
-            continue;
-        };
-
-        removeCells();
-
-        List<List<Integer>> values = new ArrayList<>();
-        this.puzzleGrid.forEach(lst -> {
-            List<Integer> rows = new ArrayList<>();
-            lst.forEach(el -> rows.add(el.getValue()));
-            values.add(rows);
-        });
-        this.unsolvedGrid = values;
-
-        return values;
-    }
-
-    private void removeCells(){
-        int k = 36;
-        int count = k;
-        Random rand = new Random();
-        List<List<Integer>> positions = new ArrayList<>();
-        while (count>0) {
-
-            int row = rand.nextInt(9);
-            int col = rand.nextInt(9);
-            positions.add(Arrays.asList(row,col));
-            positions.add(Arrays.asList(row,8-col));
-            positions.add(Arrays.asList(8-row,col));
-            positions.add(Arrays.asList(8-row,8-col));
-            for (int i=0;i<positions.size();i++) {
-                Cell c = getCell(positions.get(i).get(0), positions.get(i).get(1));
-                if (c.getValue() != 0) {
-                    c.setValue(0);
-                    updateSelectMarkers(row, col, c.getBox());
-                    emptyPos++;
-                    count--;
-                }
-            }
-        }
-
-    }
-
-    private void fillBoxes(){
-        Random rand = new Random();
-        for (int boxNo : Arrays.asList(1,5,9)) {
-            List<Cell> boxCells = boxList(boxNo);
-            for (Cell c : boxCells) {
-                int markupsSize = c.getMarkUps().size();
-                int random = rand.nextInt(markupsSize);
-                c.setValue(c.getMarkUps().get(random));
-                updateSelectMarkers(c.getRow(), c.getColumn(), c.getBox());
-                emptyPos--;
-            }
-        }
-    }
 
     private List<Cell> boxList(int i){
         List<Cell> topLeftBox = new ArrayList<>();
