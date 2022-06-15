@@ -1,2 +1,3 @@
 # SudokuSolver
-Program that can solve and create sudokus--To run: download SudokuSolver.jar file and run in terminal
+Program that can solve and create sudokus
+************ Program under construction. To be reformatted using React ************
