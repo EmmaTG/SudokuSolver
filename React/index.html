@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Hello World</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+    <!-- Don't use this in production: -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+      function Header() {
+        return <h1>Sudoku Solver</h1>;
+      }
+
+      function Buttons() {
+        return (
+        <div>
+            <button name="Create"> Create </button>
+            <button name="Create"> Clear All </button>
+            <button name="Solve"> Solve </button>
+        </div>
+        );
+      }
+
+      function SudokuGrid(props) {
+        return (
+            <input label="props.number" type="number" defaultValue={props.value}></input>
+        );
+      }
+
+      function MyApp() {
+        return (
+        <div>
+            <Header/>
+            <Buttons/>
+            <div>
+                <SudokuGrid value={1}/>
+                <SudokuGrid value={2}/>
+                <SudokuGrid value={3}/>
+            </div>
+            <div>
+                <SudokuGrid value={4}/>
+                <SudokuGrid value={5}/>
+                <SudokuGrid value={6}/>
+            </div>
+            <div>
+                <SudokuGrid value={7}/>
+                <SudokuGrid value={8}/>
+                <SudokuGrid value={9}/>
+            </div>
+        </div>
+        );
+      }
+
+      const container = document.getElementById('root');
+      const root = ReactDOM.createRoot(container);
+      root.render(<MyApp />);
+
+    </script>
+<!--
+  Note: this page is a great way to try React but it's not suitable for production.
+  It slowly compiles JSX with Babel in the browser and uses a large development build of React.
+
+  Read this section for a production-ready setup with JSX:
+  https://reactjs.org/docs/add-react-to-a-website.html#add-jsx-to-a-project
+
+  In a larger project, you can use an integrated toolchain that includes JSX instead:
+  https://reactjs.org/docs/create-a-new-react-app.html
+
+  You can also use React without JSX, in which case you can remove Babel:
+  https://reactjs.org/docs/react-without-jsx.html
+-->
+</body>
+</html>
