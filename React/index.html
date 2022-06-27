@@ -17,45 +17,77 @@
         return <h1>Sudoku Solver</h1>;
       }
 
+      function handleCreate() {
+        console.log("Create");
+      }
+
+      function handleSolve() {
+        console.log("Solve");
+      }
+
+      function handleClearAll() {
+        console.log("Clear All");
+      }
+
       function Buttons() {
         return (
         <div>
-            <button name="Create"> Create </button>
-            <button name="Create"> Clear All </button>
-            <button name="Solve"> Solve </button>
+            <button name="Create" onClick={x=>handleCreate()}> Create </button>
+            <button name="Solve" onClick={x=>handleSolve()}> Solve </button>
+            <button name="Create" onClick={x=>handleClearAll()}> Clear All </button>
         </div>
         );
       }
 
-      function SudokuGrid(props) {
+      function InputBox(props) {
         return (
-            <input label="props.number" type="number" defaultValue={props.value}></input>
+            <input
+            type="text"
+            size="2"
+            key="props.number">
+            </input>
         );
+      }
+
+      function renderSquare(i) {
+        return(
+            <InputBox number={i}/>
+        );
+      }
+
+      function renderRow(startVal){
+        return (<div className="board-row">
+              {renderSquare(startVal)}
+              {renderSquare(startVal+1)}
+              {renderSquare(startVal+2)}
+              {renderSquare(startVal+3)}
+              {renderSquare(startVal+4)}
+              {renderSquare(startVal+5)}
+              {renderSquare(startVal+6)}
+              {renderSquare(startVal+7)}
+              {renderSquare(startVal+8)}
+            </div>
+            );
       }
 
       function MyApp() {
         return (
-        <div>
+        <React.Fragment>
             <Header/>
             <Buttons/>
-            <div>
-                <SudokuGrid value={1}/>
-                <SudokuGrid value={2}/>
-                <SudokuGrid value={3}/>
-            </div>
-            <div>
-                <SudokuGrid value={4}/>
-                <SudokuGrid value={5}/>
-                <SudokuGrid value={6}/>
-            </div>
-            <div>
-                <SudokuGrid value={7}/>
-                <SudokuGrid value={8}/>
-                <SudokuGrid value={9}/>
-            </div>
-        </div>
+            {renderRow(0)}
+            {renderRow(9)}
+            {renderRow(18)}
+            {renderRow(27)}
+            {renderRow(36)}
+            {renderRow(45)}
+            {renderRow(54)}
+            {renderRow(63)}
+            {renderRow(72)}
+        </React.Fragment>
         );
       }
+
 
       const container = document.getElementById('root');
       const root = ReactDOM.createRoot(container);

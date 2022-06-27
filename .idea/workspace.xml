@@ -1,17 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="Commit">
-      <change afterPath="$PROJECT_DIR$/.idea/runConfigurations.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/React/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/module-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="Beginning of React reformat">
+      <change afterPath="$PROJECT_DIR$/React/sudoku-solver/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/React/sudoku-solver/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/React/sudoku-solver/package-lock.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/React/sudoku-solver/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/React/sudoku-solver/public/favicon.ico" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/React/sudoku-solver/public/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/React/sudoku-solver/public/logo192.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/React/sudoku-solver/public/logo512.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/React/sudoku-solver/public/manifest.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/React/sudoku-solver/public/robots.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/React/sudoku-solver/src/App.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/React/sudoku-solver/src/App.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/React/sudoku-solver/src/App.test.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/React/sudoku-solver/src/column_row_box_map.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/React/sudoku-solver/src/index.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/React/sudoku-solver/src/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/React/sudoku-solver/src/logo.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/React/sudoku-solver/src/reportWebVitals.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/React/sudoku-solver/src/setupTests.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/SudokuSolver/sudokuSolver/Controller/Controller.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/SudokuSolver/sudokuSolver/Main.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/SudokuSolver/sudokuSolver/Model/Cell.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/SudokuSolver/sudokuSolver/Model/Sudoku.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/SudokuSolver/sudokuSolver/View/SudokuView.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/React/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/React/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sudokuSolver/Controller/Controller.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sudokuSolver/Controller/Controller.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sudokuSolver/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sudokuSolver/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sudokuSolver/Model/Sudoku.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sudokuSolver/Model/Sudoku.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sudokuSolver/View/SudokuView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sudokuSolver/View/SudokuView.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -131,6 +147,7 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="GoToFile.includeJavaFiles" value="false" />
@@ -302,7 +319,14 @@
       <option name="project" value="LOCAL" />
       <updated>1597134083365</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Beginning of React reformat">
+      <created>1655298641600</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1655298641600</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -356,9 +380,11 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="INCLUDE_TEXT_INTO_SHELF" value="false" />
     <MESSAGE value="Solving: Easy and medium sudoku. Hard and expert remain unsolved." />
     <MESSAGE value="Solving algorithm complete. UI incomplete." />
@@ -368,7 +394,26 @@
     <MESSAGE value="Code cleanup and update" />
     <MESSAGE value="Code cleanup" />
     <MESSAGE value="Commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="Commit" />
+    <MESSAGE value="Beginning of React reformat" />
+    <option name="LAST_COMMIT_MESSAGE" value="Beginning of React reformat" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/sudokuSolver/Model/Sudoku.java</url>
+          <line>53</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="((java.util.ArrayList)((Sudoku)this).unsolvedGrid).get(0)" custom="sudokuSolver.Model.Sudoku,java.util.ArrayList" />
+        <watch expression="random" language="JAVA" />
+        <watch expression="c.getMarkUps().get(random)" language="JAVA" />
+      </configuration>
+    </watches-manager>
   </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />

@@ -53,11 +53,14 @@ public class Sudoku {
     public List<List<Integer>> createSudoku() {
         createMode = true;
 
+        // Fill diagonal boxes competely
         fillBoxes();
 
         List<List<Integer>> values = new ArrayList<>();
-        if (simpleSolve()) {
 
+        // Sudoku first has to eb solve before it can be created
+        if (simpleSolve()) {
+            // Sudoku created by removing cells from simply solve one.
             removeCells();
 
             this.puzzleGrid.forEach(lst -> {
@@ -464,6 +467,7 @@ public class Sudoku {
         return true;
     }
 
+    // Creates list of 3x3 boxes within the grid
     private void createBox(){
         for (int k = 0; k < 9; k= k+3) {
             for (int firstIndex=k;firstIndex<k+3;firstIndex++){

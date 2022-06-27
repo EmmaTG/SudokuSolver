@@ -1,29 +1,13 @@
 package sudokuSolver;
 
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
-import sudokuSolver.Controller.Controller;
 import sudokuSolver.Model.Sudoku;
-import sudokuSolver.View.SudokuView;
 
-public class Main extends Application {
-
-    @Override
-    public void start(Stage primaryStage) throws Exception{
-        SudokuView sudokuView = new SudokuView();
-        new Controller(sudokuView);
-        BorderPane borderPane = sudokuView.getBorderPane();
-        Scene scene = new Scene(borderPane);
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("Sudoku Solver");
-        primaryStage.show();
-    }
+public class Main{
 
 
     public static void main(String[] args) {
-        launch(args);
+        Sudoku sudoku = new Sudoku();
+        sudoku.createSudoku();
     }
 
 
