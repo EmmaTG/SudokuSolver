@@ -5,38 +5,69 @@ import reportWebVitals from './reportWebVitals';
 
 const oneToNine = [1,2,3,4,5,6,7,8,9];
 
-function Header() {
-return <h1>Sudoku Solver</h1>;
+function Header(props) {
+return <React.Fragment>
+        <h1>Sudoku Solver</h1>
+        <h4> Number of empty positions: {props.emptyPositions}</h4>
+        </React.Fragment>
 }
 
-function handleCreate() {
-console.log("Create");
-}
-
-function handleSolve() {
-console.log("Solve");
-}
-
-function handleClearAll() {
-console.log("Clear All");
-}
-
-function Buttons() {
+function Button(props) {
 return (
 <div>
-    <button name="Create" onClick={x=>handleCreate()}> Create </button>
-    <button name="Solve" onClick={x=>handleSolve()}> Solve </button>
-    <button name="Create" onClick={x=>handleClearAll()}> Clear All </button>
+    <button name="props.label" onClick={props.onClick}> {props.label} </button>
 </div>
 );
 }
 
+function boxNumToCells(boxNum){
+
+    let cells = Array(9).fill(null);
+
+    let rowStart;
+    if (boxNum < 3){
+        rowStart = 0;
+    } else if (boxNum < 6){
+        rowStart = 3;
+    } else {
+        rowStart = 6;
+    }
+
+    let colStart;
+    if (boxNum === 0 || boxNum === 3  || boxNum === 6 ){
+        colStart = 0;
+    } else if (boxNum === 1 || boxNum === 4 || boxNum === 7 ){
+        colStart = 3;
+    } else {
+        colStart = 6;
+    }
+
+    let counter = 0;
+    for (let r = rowStart; r<(rowStart+3); r++){
+        for (let c = colStart; c<(colStart+3); c++){
+            let idx = (r*9)+c;
+            cells[counter] = idx;
+            counter++;
+        }
+    }
+    return cells;
+}
+
 function cellToRow(num) {
-    return Math.floor(num/9);
+    return Math.floor((num)/9);
+}
+
+function rowToCell(row) {
+    let arr =   [0,1,2,3,4,5,6,7,8].map(x => (x+9*(row)));
+    return arr;
 }
 
 function cellToCol(num) {
-    return Math.floor(num%9);
+    return Math.floor( (num)%9);
+}
+
+function colToCell(col) {
+    return [0,1,2,3,4,5,6,7,8].map(x => x*9+col);
 }
 
 function cellToBox(num) {
@@ -71,17 +102,6 @@ function cellToBox(num) {
 
 class Cell extends React.Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            row: cellToRow(props.number),
-            col: cellToCol(props.number),
-            box: cellToBox(props.number),
-            value: null,
-            markups: oneToNine,
-        };
-    }
-
     onlyNumberKey(evt) {
         console.log("Only ASCII character in that range allowed");
         var ASCIICode = (evt.which) ? evt.which : evt.keyCode
@@ -96,6 +116,7 @@ class Cell extends React.Component {
             type="text"
             size="2"
             key="this.props.number"
+            value={this.props.details.value}
             onInput={(e) => this.props.onChange(e,this.props.number)}
             >
             </input>
@@ -105,25 +126,24 @@ class Cell extends React.Component {
 
 class Board extends React.Component {
 
-    renderSquare(i) {
-    return(
-        <Cell number={i}
-        onChange={(e) => this.props.onChange(e, i)}
-        />
-    );
+    renderCell(i) {
+    return (<Cell number={i+1}
+                  details = {this.props.cells[i]}
+                  onChange={(e) => this.props.onChange(e, i)}
+                  />);
     }
 
     renderRow(startVal){
         return (<div className="board-row">
-              {this.renderSquare(startVal)}
-              {this.renderSquare(startVal+1)}
-              {this.renderSquare(startVal+2)}
-              {this.renderSquare(startVal+3)}
-              {this.renderSquare(startVal+4)}
-              {this.renderSquare(startVal+5)}
-              {this.renderSquare(startVal+6)}
-              {this.renderSquare(startVal+7)}
-              {this.renderSquare(startVal+8)}
+              {this.renderCell(startVal)}
+              {this.renderCell(startVal+1)}
+              {this.renderCell(startVal+2)}
+              {this.renderCell(startVal+3)}
+              {this.renderCell(startVal+4)}
+              {this.renderCell(startVal+5)}
+              {this.renderCell(startVal+6)}
+              {this.renderCell(startVal+7)}
+              {this.renderCell(startVal+8)}
             </div>
             );
     }
@@ -145,46 +165,176 @@ class Board extends React.Component {
     }
 }
 
-
-
-
 class Sudoku extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            emptyPositions: 81,
-            columnMarkups: this.initialMarkups(),
-            rowMarkups: this.initialMarkups(),
-            boxMarkups: this.initialMarkups(),
-        };
+        this.state = this.resetBoard();
 
-//        for (var i=0; i<81; i++){
-//          this.board
-//        }
+    }
+
+    resetBoard(){
+        this.columnMarkups = this.initialMarkups();
+        this.rowMarkups = this.initialMarkups();
+        this.boxMarkups = this.initialMarkups();
+
+        return ({
+            board: Array(81).fill(null).map((x,num) => {
+                               return ({
+                                   row: cellToRow(num),
+                                   col: cellToCol(num),
+                                   box: cellToBox(num),
+                                   markups: oneToNine.slice(),
+                                   value: ""
+                               })
+                           }),
+            emptyPositions: 81,
+        })
     }
 
 
     initialMarkups(){
-        let markupMap = new Map()
-        for (var i = 1; i <= 9; i++){
-            markupMap.set(i,oneToNine);
-        }
+        let markupMap = Array(9).fill(oneToNine);
         return markupMap;
     }
 
+    /*
+    Get affected cells in by the addition of a value current cell curCell
+    */
+    getAffectedCells(curCell){
+        const boxNum = curCell.box;
+        const row = curCell.row;
+        const col = curCell.col;
+
+        let affectedCellNums = rowToCell(row);
+        affectedCellNums = affectedCellNums.concat(colToCell(col));
+        affectedCellNums = affectedCellNums.concat(boxNumToCells(boxNum));
+
+        affectedCellNums = affectedCellNums.filter((x,idx) => {return affectedCellNums.indexOf(x) === idx})
+
+        let affectedCells = [];
+        let newBoard = this.state.board.slice();
+        for (const c of affectedCellNums) {
+            affectedCells.push(newBoard[c]);
+        }
+
+        return affectedCells;
+    }
+
+    updateMarkers(cell) {
+        // Get values of cells in box, get values of col cells, get values of row cells
+        // if value, remove value from cell markup
+
+        let idxLocation;
+        const boxNum = cell.box;
+        idxLocation = this.boxMarkups[boxNum].indexOf(cell.value);
+        this.boxMarkups[boxNum].splice(idxLocation,1);
+
+        const row = cell.row;
+        idxLocation = this.rowMarkups[row].indexOf(cell.value);
+        this.rowMarkups[row].splice(idxLocation,1);
+
+        const col = cell.col;
+        idxLocation = this.columnMarkups[col].indexOf(cell.value);
+        this.columnMarkups[col].splice(idxLocation,1);
+
+        let affectingCells = this.getAffectedCells(cell);
+
+
+        let newBoard = this.state.board.slice();
+        for (let c of affectingCells) {
+            const idx = c.markups.indexOf(cell.value);
+            if (idx !== -1){
+                c.markups.splice(idx,1);
+            }
+        }
+
+        this.setState({board: newBoard});
+
+    }
+
     create_sudoku() {
+        let newBoard = this.state.board.slice();
+        let newEmptyCells = this.state.emptyPositions;
+
         //TODO:: After solving sudoku, values must removed to create one.
         // 1. fill boxes 0, 4 and 8 with number 1-9
+        [0,4,8].forEach( (x) => {
+            var cells = boxNumToCells(x);
+            for(const c of cells) {
+                let cell = newBoard[c];
+                const markupSize = cell.markups.length;
+                const randomNumber = Math.floor(Math.random() * markupSize);
+                cell.value = cell.markups[randomNumber];
+                newEmptyCells--;
+                this.updateMarkers(cell);
+            }
+        });
+        this.setState({
+            board: newBoard,
+            emptyPositions: newEmptyCells
+            });
         // 2. simplySolve the sudoku
+
+        this.simplySolve();
         // 3. remove a certain number of positions
         // 4. display sudoku
+    }
+
+    simplySolve() {
+        let emptyCells = [];
+        let newBoard = this.state.board.slice()
+        let emptyPos = this.state.emptyPositions;
+        newBoard.forEach(x => {
+            if (!x.value){
+                emptyCells.push(x);
+            }
+        });
+
+        let valueFound = false;
+        let c;
+        let startVal = 0;
+        for (let i=0; i < emptyCells.length; i++){
+            c = emptyCells[i];
+            for (let i = startVal + 1 ; i < 10 ; i++){
+                valueFound = this.sudokuCondition(c,i);
+                if (valueFound){
+                    c.value = i;
+                    emptyPos--;
+                    break;
+                }
+            }
+//            if(!valueFound) {
+//                for (let j = i-1; j>-1; j--) {
+//                    c.value = "";
+//                    emptyPos++;
+//                    c = emptyCells[j];
+//                    startVal = c.value;
+//                }
+//            } else {
+//                emptyPos--;
+//                startVal = 0;
+//            }
+        }
+
+        this.setState({board: newBoard, emptyPositions: emptyPos});
+    }
+
+    sudokuCondition(cell,value) {
+        let cells = this.getAffectedCells(cell).filter(c => c.value);
+        // Check if affected cells contain value you want to add
+        for (const c of cells){
+            if (c.value === value){
+                return false;
+            }
+        }
+        return true;
     }
 
     solve_sudoku() {
         //TODO:: Implement simple solve algorithm
         // First create flat list of all Cells where value = null;
-        this.state.board.forEach()
+//        this.state.board.forEach()
     }
 
     handleChange(e,num){
@@ -198,10 +348,10 @@ class Sudoku extends React.Component {
     render() {
         return (
         <React.Fragment>
-                    <Header/>
-                    <Buttons/>
+                    <Header emptyPositions={this.state.emptyPositions}/>
+                    <Button label="Create Sudoku" onClick={()=>this.create_sudoku()} />
                     <Board
-                        cells={this.board}
+                        cells={this.state.board}
                         onChange={(e,num) => this.handleChange(e,num)}/>
         </React.Fragment>
                 )
