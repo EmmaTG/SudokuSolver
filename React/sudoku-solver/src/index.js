@@ -257,7 +257,6 @@ class Sudoku extends React.Component {
         let newBoard = this.state.board.slice();
         let newEmptyCells = this.state.emptyPositions;
 
-        //TODO:: After solving sudoku, values must removed to create one.
         // 1. fill boxes 0, 4 and 8 with number 1-9
         [0,4,8].forEach( (x) => {
             var cells = boxNumToCells(x);
@@ -276,13 +275,11 @@ class Sudoku extends React.Component {
             emptyPositions: newEmptyCells
             };
         // 2. simplySolve the sudoku
-        console.log(stateObj);
         this.simplySolve(stateObj);
-        console.log(stateObj);
         // 3. remove a certain number of positions
-        this.removeCells(10,stateObj);
-        console.log(stateObj);
+        this.removeCells(32,stateObj);
         // 4. display sudoku
+        this.setState(stateObj);
     }
 
     simplySolve(stateValues) {
@@ -300,11 +297,9 @@ class Sudoku extends React.Component {
         let valueFound = false;
         let c;
         let startVal = 0;
-        const cellIterator = [1,2,3,4,5,6,7,8,9,10].values();
-        var cellStack = [];
         c = emptyCells[0];
         let idx = 0;
-        while (idx != emptyCells.length){
+        while (idx !== emptyCells.length){
             // Find a value between 1 and 9 to fill this cell
             for (let i = startVal + 1 ; i < 10 ; i++){
                 valueFound = this.sudokuCondition(c,i);
@@ -315,7 +310,7 @@ class Sudoku extends React.Component {
             }
             // If no value can be put in this position
             if(!valueFound) {
-                if (idx != 0) { // And its not the first cell
+                if (idx !== 0) { // And its not the first cell
                     c.value = "";
                     emptyPos++;
                     idx--;
@@ -338,17 +333,43 @@ class Sudoku extends React.Component {
         let newBoard = stateObj.board
         let emptyPos = stateObj.emptyPositions;
 
-         let count = numCells;
-         while (count > 0) {
-            const randomNumberRow = Math.floor(Math.random() * 9);
-            const randomNumberCol = Math.floor(Math.random() * 9);
-            const cellNumber = randomNumberRow*9 + randomNumberCol
-            let removedCell = newBoard[cellNumber];
-            removedCell.value = "";
-            removedCell.markups = oneToNine.slice();
-            this.updateMarkers(removedCell);
-            emptyPos++;
-            count--;
+         console.log(numCells);
+         while (emptyPos < numCells) {
+                const randomNumberRow = Math.floor(Math.random() * 5);
+                const randomNumberCol = Math.floor(Math.random() * 5);
+                let rowNum;
+                let colNum;
+                for (var i = 0 ; i < 4 ;i++) {
+                    switch(i){
+                        case 1:
+                            rowNum = 8-randomNumberRow;
+                            colNum = randomNumberCol
+                            break;
+                        case 2:
+                            rowNum = randomNumberRow
+                            colNum = 8-randomNumberCol;
+                            break;
+                        case 3:
+                            rowNum = 8-randomNumberRow
+                            colNum = 8-randomNumberCol;
+                            break;
+                        default:
+                            rowNum = randomNumberRow
+                            colNum = randomNumberCol;
+                    }
+                    const cellNumber = rowNum*9 + colNum
+                    let removedCell = newBoard[cellNumber];
+                    if (removedCell.value !== "") {
+                        removedCell.value = "";
+                        removedCell.markups = oneToNine.slice();
+                        this.updateMarkers(removedCell);
+                        emptyPos++;
+                    }
+                    if (randomNumberRow === 4 && randomNumberCol === 4  )  {
+                        numCells += 3;
+                        break; //Break: for (var i = 0 ; i < 4 ;i++)
+                    }
+                }
             }
          stateObj.emptyPositions = emptyPos;
     }
@@ -365,9 +386,6 @@ class Sudoku extends React.Component {
     }
 
     solve_sudoku() {
-        //TODO:: Implement simple solve algorithm
-        // First create flat list of all Cells where value = null;
-//        this.state.board.forEach()
     }
 
     handleChange(e,num){
