@@ -14,9 +14,7 @@ return <React.Fragment>
 
 function Button(props) {
 return (
-<div>
     <button name="props.label" onClick={props.onClick}> {props.label} </button>
-</div>
 );
 }
 
@@ -101,14 +99,6 @@ function cellToBox(num) {
 }
 
 class Cell extends React.Component {
-
-    onlyNumberKey(evt) {
-        console.log("Only ASCII character in that range allowed");
-        var ASCIICode = (evt.which) ? evt.which : evt.keyCode
-        if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57))
-            return false;
-        return true;
-    }
 
     render () {
         return (
@@ -339,7 +329,7 @@ class Sudoku extends React.Component {
                 const randomNumberCol = Math.floor(Math.random() * 5);
                 let rowNum;
                 let colNum;
-                for (var i = 0 ; i < 4 ;i++) {
+                for (var i = 0 ; i < 4 ;i++) { // To ensure symmetrical sudoku
                     switch(i){
                         case 1:
                             rowNum = 8-randomNumberRow;
@@ -389,18 +379,30 @@ class Sudoku extends React.Component {
     }
 
     handleChange(e,num){
-    //TODO: Only allow numeric values
-//        const result = e.target.value.replace(/\D/g, '');
-//        setValue(result);
-        console.log("Handling box number " + num);
-        console.log(e.target.value);
+        const result = e.target.value.replace(/\D/g, '');
+        if (result && result <= 9 && result>0){
+            let newBoard = this.state.board.slice();
+            newBoard[num].value = result;
+            this.setState({board:newBoard});
+        }
     }
+
+    restart_sudoku(){
+
+    }
+
+    clear_all(){
+
+    }
+
 
     render() {
         return (
         <React.Fragment>
                     <Header emptyPositions={this.state.emptyPositions}/>
                     <Button label="Create Sudoku" onClick={()=>this.create_sudoku()} />
+                    <Button label="Restart current game" onClick={()=>this.restart_sudoku()} />
+                    <Button label="Clear All" onClick={()=>this.clear_all()} />
                     <Board
                         cells={this.state.board}
                         onChange={(e,num) => this.handleChange(e,num)}/>
