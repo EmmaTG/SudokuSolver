@@ -266,7 +266,7 @@ class Sudoku extends React.Component {
         // 2. simplySolve the sudoku
         this.simplySolve(stateObj);
         // 3. remove a certain number of positions
-        this.removeCells(32,stateObj);
+        this.removeCells(42,stateObj);
         this.originalBoard = stateObj.board.map(x => {return {row: x.row,
                                                              col: x.col,
                                                              box: x.box,
@@ -325,7 +325,6 @@ class Sudoku extends React.Component {
         let newBoard = stateObj.board
         let emptyPos = newBoard.reduce(this.countEmptyPositions,0);
 
-         console.log(numCells);
          while (emptyPos < numCells) {
                 const randomNumberRow = Math.floor(Math.random() * 5);
                 const randomNumberCol = Math.floor(Math.random() * 5);
@@ -358,13 +357,11 @@ class Sudoku extends React.Component {
                         emptyPos++;
                     }
                     if (randomNumberRow === 4 && randomNumberCol === 4  )  {
-                        numCells += 3;
                         break; //Break: for (var i = 0 ; i < 4 ;i++)
                     }
                 }
             }
 
-        //TODO: Create indicator in state.board object to distinguish between starting number and number filled in my user
         newBoard.forEach(x => {if (x.value !== ""){
                                     x.start = true;
                                     }
