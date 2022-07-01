@@ -7,7 +7,7 @@ const oneToNine = [1,2,3,4,5,6,7,8,9];
 
 function Header(props) {
 return <React.Fragment>
-        <h1></h1>
+        <h1>Sudoku</h1>
         <h4> Number of empty positions: {props.emptyPositions}</h4>
         </React.Fragment>
 }
