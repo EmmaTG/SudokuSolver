@@ -160,6 +160,7 @@ class Sudoku extends React.Component {
     constructor(props) {
         super(props);
         this.state = this.resetBoard();
+        this.handleChange = this.handleChange.bind(this);
 
     }
 
@@ -184,7 +185,7 @@ class Sudoku extends React.Component {
 
 
     initialMarkups(){
-        let markupMap = Array(9).fill(oneToNine);
+        let markupMap = Array(9).fill(oneToNine.slice());
         return markupMap;
     }
 
@@ -211,7 +212,7 @@ class Sudoku extends React.Component {
         return affectedCells;
     }
 
-    updateMarkers(cell) {
+    updateMarkers(cell, newBoard) {
         // Get values of cells in box, get values of col cells, get values of row cells
         // if value, remove value from cell markup
 
@@ -230,8 +231,6 @@ class Sudoku extends React.Component {
 
         let affectingCells = this.getAffectedCells(cell);
 
-
-        let newBoard = this.state.board.slice();
         for (let c of affectingCells) {
             const idx = c.markups.indexOf(cell.value);
             if (idx !== -1){
@@ -256,7 +255,7 @@ class Sudoku extends React.Component {
                 const randomNumber = Math.floor(Math.random() * markupSize);
                 cell.value = cell.markups[randomNumber];
                 newEmptyCells--;
-                this.updateMarkers(cell);
+                this.updateMarkers(cell,newBoard);
             }
         });
 
@@ -352,7 +351,7 @@ class Sudoku extends React.Component {
                     if (removedCell.value !== "") {
                         removedCell.value = "";
                         removedCell.markups = oneToNine.slice();
-                        this.updateMarkers(removedCell);
+                        this.updateMarkers(removedCell, newBoard);
                         emptyPos++;
                     }
                     if (randomNumberRow === 4 && randomNumberCol === 4  )  {
@@ -388,11 +387,17 @@ class Sudoku extends React.Component {
     }
 
     restart_sudoku(){
-
+        //TODO: Create function to restart game to original values
     }
 
-    clear_all(){
+    reset(){
+        let newState = this.resetBoard();
 
+        this.columnMarkups = this.initialMarkups();
+        this.rowMarkups = this.initialMarkups();
+        this.boxMarkups = this.initialMarkups();
+
+        this.setState(newState);
     }
 
 
@@ -402,7 +407,7 @@ class Sudoku extends React.Component {
                     <Header emptyPositions={this.state.emptyPositions}/>
                     <Button label="Create Sudoku" onClick={()=>this.create_sudoku()} />
                     <Button label="Restart current game" onClick={()=>this.restart_sudoku()} />
-                    <Button label="Clear All" onClick={()=>this.clear_all()} />
+                    <Button label="Clear all" onClick={()=>this.reset()} />
                     <Board
                         cells={this.state.board}
                         onChange={(e,num) => this.handleChange(e,num)}/>
