@@ -15,7 +15,7 @@ return <React.Fragment>
 }
 
 function Button(props) {
-    if ( (props.label !== 'Check' && props.label !== 'Show solution') || props.render){
+    if (props.render){
         return (
             <button name="props.label" onClick={props.onClick}> {props.label}</button>
         );
@@ -105,6 +105,11 @@ class Sudoku extends React.Component {
                      mode: "INPUT"
                  };
         this.handleChange = this.handleChange.bind(this);
+        this.create_sudoku = this.create_sudoku.bind(this);
+        this.restart_sudoku = this.restart_sudoku.bind(this);
+        this.reset = this.reset.bind(this);
+        this.handleShowSolution = this.handleShowSolution.bind(this);
+        this.check = this.check.bind(this);
         this.resetVariables();
     }
 
@@ -361,9 +366,9 @@ class Sudoku extends React.Component {
         return (
         <React.Fragment>
                     <Header emptyPositions={emptyCellPositions}/>
-                    <Button label="Create Sudoku" onClick={()=>this.create_sudoku()} />
-                    <Button label="Restart current game" onClick={()=>this.restart_sudoku()} />
-                    <Button label="Clear all" onClick={()=>this.reset()} />
+                    <Button label="Create Sudoku" onClick={()=>this.create_sudoku()} render={true}/>
+                    <Button label="Restart current game" onClick={()=>this.restart_sudoku()} render={this.originalBoard} />
+                    <Button label="Clear all" onClick={()=>this.reset()} render={emptyCellPositions<81} />
                     <Board
                         cells={this.state.board}
                         mode={this.state.mode}
