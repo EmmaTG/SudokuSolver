@@ -34,11 +34,11 @@ class Cell extends React.Component {
             <input
             type="text"
             size="2"
-            key="this.props.number"
+            key="this.props.details.cellIndex"
             value={this.props.details.value}
             style={{background: fontStyle}}
             readOnly={this.props.details.start}
-            onInput={(e) => this.props.onChange(e,this.props.number)}
+            onInput={(e) => this.props.onChange(e,this.props.details.cellIndex)}
             >
             </input>
         );
@@ -48,8 +48,7 @@ class Cell extends React.Component {
 class Board extends React.Component {
 
     renderCell(i) {
-    return (<Cell number={i+1}
-                  details = {this.props.cells[i]}
+    return (<Cell details = {this.props.cells[i]}
                   mode = {this.props.mode}
                   onChange={(e) => this.props.onChange(e, i)}
                   />);
@@ -191,20 +190,12 @@ class Sudoku extends React.Component {
             };
         // 2. simplySolve the sudoku
         this.simplySolve(stateObj);
-        this.solutionBoard = stateObj.board.map((x,num) => {return {   cellIndex: num,
-                                                                 markups: x.markups.slice(),
-                                                                 value: x.value,
-                                                                 start: false,
-                                                                 correct: 0}
-                                                             });
+        this.solutionBoard = JSON.parse(JSON.stringify(stateObj.board));
+
         // 3. remove a certain number of positions
         this.removeCells(42,stateObj);
-        this.originalBoard = stateObj.board.map((x,num) => {return {cellIndex: num,
-                                                             markups: x.markups.slice(),
-                                                             value: x.value,
-                                                             start: x.value !== "",
-                                                             correct: 0}
-                                                     });
+        this.originalBoard = JSON.parse(JSON.stringify(stateObj.board));
+        this.originalBoard.forEach(x => x.start = x.value !== "");
         // 4. display sudoku
         this.setState(stateObj);
     }
@@ -340,12 +331,11 @@ class Sudoku extends React.Component {
     }
 
     check(){
-    //TODO: Fix check functionality
         let currentBoard = this.state.board.slice();
         for (let i = 0; i < currentBoard.length; i++){
             let cell = currentBoard[i];
             if (!cell.start && cell.value !== ""){
-                cell.correct = (cell.value === this.solutionBoard[i].value);
+                cell.correct = (+cell.value === this.solutionBoard[i].value);
             }
         }
         this.setState({board: currentBoard, mode:"CHECK"})
