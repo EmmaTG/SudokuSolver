@@ -15,9 +15,12 @@ return <React.Fragment>
 }
 
 function Button(props) {
-    return (
-        <button name="props.label" onClick={props.onClick}> {props.label}</button>
-    );
+    if ( (props.label !== 'Check' && props.label !== 'Show solution') || props.render){
+        return (
+            <button name="props.label" onClick={props.onClick}> {props.label}</button>
+        );
+    }
+    return null;
 }
 
 class Cell extends React.Component {
@@ -37,7 +40,7 @@ class Cell extends React.Component {
             key="this.props.details.cellIndex"
             value={this.props.details.value}
             style={{background: fontStyle}}
-            readOnly={this.props.details.start}
+            readOnly={this.props.details.start || this.props.mode==='SOLVED'}
             onInput={(e) => this.props.onChange(e,this.props.details.cellIndex)}
             >
             </input>
@@ -90,29 +93,29 @@ class Sudoku extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = this.resetBoard();
+        this.state = {board: Array(81).fill(null).map((x,num) => {
+                                        return ({
+                                            cellIndex: num,
+                                            markups: oneToNine.slice(),
+                                            value: "",
+                                            start: false,
+                                            correct: 1,
+                                        })
+                                    }),
+                     mode: "INPUT"
+                 };
         this.handleChange = this.handleChange.bind(this);
-        this.originalBoard = null;
-        this.solutionBoard = null;
+        this.resetVariables();
     }
 
-    resetBoard(){
+    resetVariables(){
+        this.originalBoard = null;
+        this.solutionBoard = null;
+
         this.columnMarkups = this.initialMarkups();
         this.rowMarkups = this.initialMarkups();
         this.boxMarkups = this.initialMarkups();
 
-        return ({
-            board: Array(81).fill(null).map((x,num) => {
-                               return ({
-                                   cellIndex: num,
-                                   markups: oneToNine.slice(),
-                                   value: "",
-                                   start: false,
-                                   correct: 1,
-                               })
-                           }),
-            mode: "INPUT"
-        })
     }
 
     initialMarkups(){
@@ -171,7 +174,9 @@ class Sudoku extends React.Component {
     }
 
     create_sudoku() {
+
         let newBoard = this.state.board.slice();
+        newBoard.forEach(x => {x.value = ''; x.start = 0; x.correct = 1;});
 
         // 1. fill boxes 0, 4 and 8 with number 1-9
         [0,4,8].forEach( (x) => {
@@ -196,6 +201,7 @@ class Sudoku extends React.Component {
         this.removeCells(42,stateObj);
         this.originalBoard = JSON.parse(JSON.stringify(stateObj.board));
         this.originalBoard.forEach(x => x.start = x.value !== "");
+        this.solutionBoard.forEach((x,num) => x.start = this.originalBoard[num].start);
         // 4. display sudoku
         this.setState(stateObj);
     }
@@ -301,12 +307,9 @@ class Sudoku extends React.Component {
         return true;
     }
 
-    solve_sudoku() {
-    }
-
     handleChange(e,num){
         const result = e.target.value.replace(/\D/g, '');
-        if (result && result <= 9 && result>0){
+        if ( (result && result <= 9 && result>0) || e.target.value === ''){
             let newBoard = this.state.board.slice();
             newBoard[num].value = result;
             if (this.solutionBoard){
@@ -316,18 +319,26 @@ class Sudoku extends React.Component {
         }
     }
 
+    handleShowSolution(){
+    if (this.solutionBoard){
+        this.setState({board:this.solutionBoard,mode:'SOLVED'})
+    } else {
+        let newBoard = JSON.parse(JSON.stringify(this.state.board));
+        this.simplySolve(newBoard);
+        this.setState({board:newBoard,mode:'SOLVED'})
+    }
+    }
+
     restart_sudoku(){
-        this.setState({board: this.originalBoard});
+        this.setState({board: JSON.parse(JSON.stringify(this.originalBoard))});
     }
 
     reset(){
-        let newState = this.resetBoard();
+        let newBoard = JSON.parse(JSON.stringify(this.state.board));
+        newBoard.forEach(x => {x.value = ''; x.start = 0; x.correct=1;})
+        this.resetVariables();
 
-        this.columnMarkups = this.initialMarkups();
-        this.rowMarkups = this.initialMarkups();
-        this.boxMarkups = this.initialMarkups();
-
-        this.setState(newState);
+        this.setState({board: newBoard, mode:'INPUT'});
     }
 
     check(){
@@ -353,11 +364,12 @@ class Sudoku extends React.Component {
                     <Button label="Create Sudoku" onClick={()=>this.create_sudoku()} />
                     <Button label="Restart current game" onClick={()=>this.restart_sudoku()} />
                     <Button label="Clear all" onClick={()=>this.reset()} />
-                    <Button label="Check" onClick={()=>this.check()} />
                     <Board
                         cells={this.state.board}
                         mode={this.state.mode}
                         onChange={(e,num) => this.handleChange(e,num)}/>
+                    <Button label="Show solution" onClick={()=>this.handleShowSolution()} render={this.solutionBoard} />
+                    <Button label="Check" onClick={()=>this.check()} render={this.solutionBoard}  />
         </React.Fragment>
                 )
     }

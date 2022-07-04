@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="Reformat files and simplify objects">
+    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="Created deep copy of board for solution and board original objects">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/React/sudoku-solver/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/React/sudoku-solver/src/index.js" afterDir="false" />
     </list>
@@ -372,7 +372,14 @@
       <option name="project" value="LOCAL" />
       <updated>1656918832078</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Created deep copy of board for solution and board original objects">
+      <created>1656919406116</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1656919406116</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -450,7 +457,8 @@
     <MESSAGE value="Restart button functionality and formatting" />
     <MESSAGE value="Fixed Header" />
     <MESSAGE value="Reformat files and simplify objects" />
-    <option name="LAST_COMMIT_MESSAGE" value="Reformat files and simplify objects" />
+    <MESSAGE value="Created deep copy of board for solution and board original objects" />
+    <option name="LAST_COMMIT_MESSAGE" value="Created deep copy of board for solution and board original objects" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
