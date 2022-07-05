@@ -1,3 +1,4 @@
-# SudokuSolver
-Program that can solve and create sudokus
-************ Program under construction. To be reformatted using React ************
+# SudokuSolver  
+Program that can solve and create sudokus  
+To run: within file directory ...\SudokuSolver\React\sudoku-solver, run 'npm start'  
+************ Program under construction. Reformating using React ************
