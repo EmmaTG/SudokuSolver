@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
+import {BsFillPencilFill} from 'react-icons/bs';
 
 import {numberToLocation, getCellsFromRow, getCellsFromCol, getCellsFromBox} from './utilities.js';
 
@@ -9,15 +10,16 @@ const oneToNine = [1,2,3,4,5,6,7,8,9];
 
 function Header(props) {
 return <React.Fragment>
-        <h1>Sudoku</h1>
+        <h1 className="container text-3xl font-bold underline">Sudoku</h1>
         <h4> Number of empty positions: {props.emptyPositions}</h4>
         </React.Fragment>
 }
 
 function Button(props) {
-    if (props.render){
+    if (!props.render){
         return (
-            <button name="props.label" onClick={props.onClick}> {props.label}</button>
+            <button className="place-items-center flex bg-white hover:bg-gray-100 text-gray-800 font-semibold py-1 px-1 border-gray-400 rounded shadow"
+            name="props.label" onClick={props.onClick}>{props.image } {props.label}</button>
         );
     }
     return null;
@@ -27,16 +29,32 @@ class Cell extends React.Component {
 
     render () {
         let fontStyle = '';
+        const {row, col, box} = numberToLocation(+this.props.details.cellIndex);
+
         if (this.props.details.start){
-            fontStyle = '#D3D3D3';
+            fontStyle = 'font-bold bg-slate-300';
         }
         else if (this.props.mode === "CHECK" && !this.props.details.correct){
-            fontStyle = '#ffcccb';
+            fontStyle = 'bg-red-300';
         }
+        if ((col+1)%3 === 0) {
+            fontStyle += " border-r-2 border-r-black ";
+        }
+        if ((row+1)%3 === 0){
+            fontStyle += " border-b-2 border-b-black ";
+        }
+        if (col === 0){
+            fontStyle += " border-l-2 border-l-black ";
+        }
+        if (row === 0){
+            fontStyle += " border-t-2 border-t-black ";
+        }
+
+        let classN = "border-2 w-10 h-15 "+ fontStyle;
         return (
             <input
+            className={classN}
             type="text"
-            size="2"
             key="this.props.details.cellIndex"
             value={this.props.details.value}
             style={{background: fontStyle}}
@@ -313,6 +331,7 @@ class Sudoku extends React.Component {
     }
 
     handleChange(e,num){
+        let boardMode = "INPUT";
         const result = e.target.value.replace(/\D/g, '');
         if ( (result && result <= 9 && result>0) || e.target.value === ''){
             let newBoard = this.state.board.slice();
@@ -320,7 +339,16 @@ class Sudoku extends React.Component {
             if (this.solutionBoard){
                newBoard[num].correct = (+result === this.solutionBoard[num].value);
             }
-            this.setState({board:newBoard,mode:"INPUT"});
+            const emptyPositions = newBoard.reduce(this.countEmptyPositions, 0);
+            if (emptyPositions === 0){
+                const numberIncorrect = newBoard.reduce((total,cell) => total + (cell.correct ? 0 : 1), 0)
+                if (numberIncorrect === 0){
+                    boardMode= "SOLVED";
+                } else {
+                    alert("You have " + numberIncorrect + " incorrect entries!!");
+                }
+            }
+            this.setState({board:newBoard,mode:boardMode});
         }
     }
 
@@ -363,19 +391,20 @@ class Sudoku extends React.Component {
 
     render() {
         let emptyCellPositions = this.state.board.reduce(this.countEmptyPositions, 0);
+
         return (
-        <React.Fragment>
+        <div className="container mx-auto mt-3 font-thin">
                     <Header emptyPositions={emptyCellPositions}/>
-                    <Button label="Create Sudoku" onClick={()=>this.create_sudoku()} render={true}/>
-                    <Button label="Restart current game" onClick={()=>this.restart_sudoku()} render={this.originalBoard} />
-                    <Button label="Clear all" onClick={()=>this.reset()} render={emptyCellPositions<81} />
+                    <Button label="Create Sudoku" onClick={()=>this.create_sudoku()} image={<BsFillPencilFill/>}/>
+                    <Button label="Restart current game" onClick={()=>this.restart_sudoku()} render={!this.originalBoard} />
+                    <Button label="Clear all" onClick={()=>this.reset()} render={emptyCellPositions>=81} />
                     <Board
                         cells={this.state.board}
                         mode={this.state.mode}
                         onChange={(e,num) => this.handleChange(e,num)}/>
-                    <Button label="Show solution" onClick={()=>this.handleShowSolution()} render={this.solutionBoard} />
-                    <Button label="Check" onClick={()=>this.check()} render={this.solutionBoard}  />
-        </React.Fragment>
+                    <Button label="Show solution" onClick={()=>this.handleShowSolution()} render={!this.solutionBoard} />
+                    <Button label="Check" onClick={()=>this.check()} render={!this.solutionBoard}  />
+        </div>
                 )
     }
 }
