@@ -1,3 +1,5 @@
+export const oneToNine = [1,2,3,4,5,6,7,8,9];
+
 export function numberToLocation(num){
     const rowNum = cellToRow(num);
     const colNum = cellToCol(num);
