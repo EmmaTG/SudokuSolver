@@ -18,7 +18,7 @@ return <React.Fragment>
 function Button(props) {
     if (!props.render){
         return (
-            <button className="place-items-center flex bg-white hover:bg-gray-100 text-gray-800 font-semibold py-1 px-1 border-gray-400 rounded shadow"
+            <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-1 px-1 border-gray-400 rounded shadow"
             name="props.label" onClick={props.onClick}>{props.image } {props.label}</button>
         );
     }
@@ -144,6 +144,10 @@ class Sudoku extends React.Component {
     initialMarkups(){
         let markupMap = Array(9).fill(oneToNine.slice());
         return markupMap;
+    }
+
+    getEmptyPositions(stateBoard){
+        return stateBoard.reduce(this.countEmptyPositions,0);
     }
 
     /*
@@ -274,7 +278,7 @@ class Sudoku extends React.Component {
 
     removeCells(numCells, stateObj) {
         let newBoard = stateObj.board
-        let emptyPos = newBoard.reduce(this.countEmptyPositions,0);
+        let emptyPos = this.getEmptyPositions(newBoard);
 
          while (emptyPos < numCells) {
                 const randomNumberRow = Math.floor(Math.random() * 5);
@@ -339,7 +343,7 @@ class Sudoku extends React.Component {
             if (this.solutionBoard){
                newBoard[num].correct = (+result === this.solutionBoard[num].value);
             }
-            const emptyPositions = newBoard.reduce(this.countEmptyPositions, 0);
+            const emptyPositions = this.getEmptyPositions(newBoard);
             if (emptyPositions === 0){
                 const numberIncorrect = newBoard.reduce((total,cell) => total + (cell.correct ? 0 : 1), 0)
                 if (numberIncorrect === 0){
@@ -356,9 +360,10 @@ class Sudoku extends React.Component {
     if (this.solutionBoard){
         this.setState({board:this.solutionBoard,mode:'SOLVED'})
     } else {
-        let newBoard = JSON.parse(JSON.stringify(this.state.board));
-        this.simplySolve(newBoard);
-        this.setState({board:newBoard,mode:'SOLVED'})
+        // TODO: Set up candidate check solution method (To be run before simply solve)
+//        let newBoard = JSON.parse(JSON.stringify(this.state.board));
+//        this.simplySolve(newBoard);
+//        this.setState({board:newBoard,mode:'SOLVED'})
     }
     }
 
@@ -390,12 +395,11 @@ class Sudoku extends React.Component {
     }
 
     render() {
-        let emptyCellPositions = this.state.board.reduce(this.countEmptyPositions, 0);
-
+        let emptyCellPositions = this.getEmptyPositions(this.state.board);
         return (
         <div className="container mx-auto mt-3 font-thin">
                     <Header emptyPositions={emptyCellPositions}/>
-                    <Button label="Create Sudoku" onClick={()=>this.create_sudoku()} image={<BsFillPencilFill/>}/>
+                    <Button label="Create Sudoku" onClick={()=>this.create_sudoku()} image={<BsFillPencilFill className="inline-block "/>}/>
                     <Button label="Restart current game" onClick={()=>this.restart_sudoku()} render={!this.originalBoard} />
                     <Button label="Clear all" onClick={()=>this.reset()} render={emptyCellPositions>=81} />
                     <Board
