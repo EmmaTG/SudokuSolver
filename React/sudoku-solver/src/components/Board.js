@@ -1,44 +1,40 @@
 import React from 'react';
-
 import {Cell} from './Cell.js';
 
-export class Board extends React.Component {
-
-    renderCell(i) {
-    return (<Cell details = {this.props.cells[i]}
-                  mode = {this.props.mode}
-                  onChange={(e) => this.props.onChange(e, i)}
-                  />);
-    }
-
-    renderRow(startVal){
-        return (<div className="board-row">
-              {this.renderCell(startVal)}
-              {this.renderCell(startVal+1)}
-              {this.renderCell(startVal+2)}
-              {this.renderCell(startVal+3)}
-              {this.renderCell(startVal+4)}
-              {this.renderCell(startVal+5)}
-              {this.renderCell(startVal+6)}
-              {this.renderCell(startVal+7)}
-              {this.renderCell(startVal+8)}
-            </div>
-            );
-    }
-
-    render () {
+export function Board(props) {
         return (
             <React.Fragment>
-                {this.renderRow(0)}
-                {this.renderRow(9)}
-                {this.renderRow(18)}
-                {this.renderRow(27)}
-                {this.renderRow(36)}
-                {this.renderRow(45)}
-                {this.renderRow(54)}
-                {this.renderRow(63)}
-                {this.renderRow(72)}
+                {renderRow(0, props)}
+                {renderRow(9, props)}
+                {renderRow(18, props)}
+                {renderRow(27, props)}
+                {renderRow(36, props)}
+                {renderRow(45, props)}
+                {renderRow(54, props)}
+                {renderRow(63, props)}
+                {renderRow(72, props)}
             </React.Fragment>
         );
-    }
+}
+
+function renderCell(i,props) {
+return (<Cell details = {props.cells[i]}
+              mode = {props.mode}
+              onChange={(e) => props.onChange(e, i)}
+              />);
+}
+
+function renderRow(startVal,props){
+    return (<div className="board-row">
+        {renderCell(startVal,props)}
+        {renderCell(startVal+1,props)}
+        {renderCell(startVal+2,props)}
+        {renderCell(startVal+3,props)}
+        {renderCell(startVal+4,props)}
+        {renderCell(startVal+5,props)}
+        {renderCell(startVal+6,props)}
+        {renderCell(startVal+7,props)}
+        {renderCell(startVal+8,props)}
+        </div>
+    );
 }

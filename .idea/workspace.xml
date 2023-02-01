@@ -2,15 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="Reformatting file directory">
-      <change afterPath="$PROJECT_DIR$/React/sudoku-solver/src/components/Board.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/React/sudoku-solver/src/components/Button.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/React/sudoku-solver/src/components/Cell.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/React/sudoku-solver/src/components/Header.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/React/sudoku-solver/src/components/Sudoku.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/React/sudoku-solver/src/column_row_box_map.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/React/sudoku-solver/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/React/sudoku-solver/src/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/React/sudoku-solver/src/utilities.js" beforeDir="false" afterPath="$PROJECT_DIR$/React/sudoku-solver/src/Utilities/utilities.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/React/sudoku-solver/src/components/Board.js" beforeDir="false" afterPath="$PROJECT_DIR$/React/sudoku-solver/src/components/Board.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/React/sudoku-solver/src/components/Button.js" beforeDir="false" afterPath="$PROJECT_DIR$/React/sudoku-solver/src/components/Button.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/React/sudoku-solver/src/components/Cell.js" beforeDir="false" afterPath="$PROJECT_DIR$/React/sudoku-solver/src/components/Cell.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/React/sudoku-solver/src/components/Sudoku.js" beforeDir="false" afterPath="$PROJECT_DIR$/React/sudoku-solver/src/components/Sudoku.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -427,7 +423,14 @@
       <option name="project" value="LOCAL" />
       <updated>1657107851832</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="Reformatting file directory">
+      <created>1657113652327</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1657113652327</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
