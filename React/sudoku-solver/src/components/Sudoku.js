@@ -27,6 +27,7 @@ export class Sudoku extends React.Component {
         this.create_sudoku = this.create_sudoku.bind(this);
         this.restart_sudoku = this.restart_sudoku.bind(this);
         this.reset = this.reset.bind(this);
+        this.solve = this.solve.bind(this);
         this.handleShowSolution = this.handleShowSolution.bind(this);
         this.check = this.check.bind(this);
         this.resetVariables();
@@ -79,19 +80,19 @@ export class Sudoku extends React.Component {
         let idxLocation;
         const {row, col, box} = numberToLocation(cell.cellIndex);
 
-        idxLocation = this.boxMarkups[box].indexOf(cell.value);
+        idxLocation = this.boxMarkups[box].indexOf(+cell.value);
         this.boxMarkups[box].splice(idxLocation,1);
 
-        idxLocation = this.rowMarkups[row].indexOf(cell.value);
+        idxLocation = this.rowMarkups[row].indexOf(+cell.value);
         this.rowMarkups[row].splice(idxLocation,1);
 
-        idxLocation = this.columnMarkups[col].indexOf(cell.value);
+        idxLocation = this.columnMarkups[col].indexOf(+cell.value);
         this.columnMarkups[col].splice(idxLocation,1);
 
         let affectingCells = this.getAffectedCells(cell);
 
         for (let c of affectingCells) {
-            const idx = c.markups.indexOf(cell.value);
+            const idx = c.markups.indexOf(+cell.value);
             if (idx !== -1){
                 c.markups.splice(idx,1);
             }
@@ -224,6 +225,64 @@ export class Sudoku extends React.Component {
                                 });
     }
 
+    getAllowedNumbers(cell){
+        return cell.markups;
+    }
+
+    checkForMarkups(rowNum, getCellsFunc) {
+        let updated = false;
+        let cellsInROI = getCellsFunc(rowNum);
+        for (const c_num of cellsInROI) {
+            let cell = this.state.board[c_num]
+            if (cell.value === "") {
+                let allowedNumbers = this.getAllowedNumbers(cell);
+                if (allowedNumbers.length === 1){
+                    cell.value = allowedNumbers[0].toString();
+                    this.updateMarkers(cell,this.state.board);
+                    updated = true;
+                }
+            }
+        }
+        return updated;
+    }
+
+    solve() {
+//     while (this.getEmptyPositions(this.state.board) >0 ){
+        if (this.state.board.mode != 'SOLVED'){
+            this.state.board.forEach(c => {
+                if (c.value !== ""){
+                    c.start = true;
+                }
+            })
+
+            let count = 1
+            var updated = true;
+            var updatedRow, updatedCol, updatedBox
+            while (count < 20 && updated) {
+                updated= false
+                for (var i = 0; i < 9; i++) {
+                    updatedRow = this.checkForMarkups(i, getCellsFromRow);
+                    updatedCol = this.checkForMarkups(i, getCellsFromCol);
+                    updatedBox = this.checkForMarkups(i, getCellsFromBox);
+                    updated = updated || updatedRow || updatedCol || updatedBox
+                }
+                count++;
+            }
+            let emptyPositions = this.getEmptyPositions(this.state.board)
+            if ( emptyPositions>0 ){
+            let stateObj = {
+                        board: this.state.board
+                        };
+                    // 2. simplySolve the sudoku
+                    this.simplySolve(stateObj);
+            }
+            emptyPositions = this.getEmptyPositions(this.state.board)
+            if ( emptyPositions === 0 ){
+                this.setState({mode:'SOLVED'})
+            }
+        }
+    }
+
     sudokuCondition(cell,value) {
         let cells = this.getAffectedCells(cell).filter(c => c.value);
         // Check if affected cells contain value you want to add
@@ -239,6 +298,7 @@ export class Sudoku extends React.Component {
         let boardMode = "INPUT";
         const result = e.target.value.replace(/\D/g, '');
         if ( (result && result <= 9 && result>0) || e.target.value === ''){
+
             let newBoard = this.state.board.slice();
             newBoard[num].value = result;
             if (this.solutionBoard){
@@ -255,21 +315,18 @@ export class Sudoku extends React.Component {
             }
             this.setState({board:newBoard,mode:boardMode});
         }
+        this.updateMarkers(this.state.board[num],this.state.board);
+
     }
 
     handleShowSolution(){
-    if (this.solutionBoard){
-        this.setState({board:this.solutionBoard,mode:'SOLVED'})
-    } else {
-        // TODO: Set up candidate check solution method (To be run before simply solve)
-//        let newBoard = JSON.parse(JSON.stringify(this.state.board));
-//        this.simplySolve(newBoard);
-//        this.setState({board:newBoard,mode:'SOLVED'})
-    }
+        if (this.solutionBoard){
+            this.setState({board:this.solutionBoard,mode:'SOLVED'})
+        }
     }
 
     restart_sudoku(){
-        this.setState({board: JSON.parse(JSON.stringify(this.originalBoard))});
+        this.setState({board: JSON.parse(JSON.stringify(this.originalBoard)), mode:'INPUT'});
     }
 
     reset(){
@@ -303,6 +360,7 @@ export class Sudoku extends React.Component {
                     <Button label="Create Sudoku" onClick={()=>this.create_sudoku()} image={<BsFillPencilFill className="inline-block "/>}/>
                     <Button label="Restart current game" onClick={()=>this.restart_sudoku()} render={!this.originalBoard} />
                     <Button label="Clear all" onClick={()=>this.reset()} render={emptyCellPositions>=81} />
+                    <Button label="Solve" onClick={()=>this.solve()} render={emptyCellPositions>=81} />
                     <Board
                         cells={this.state.board}
                         mode={this.state.mode}
