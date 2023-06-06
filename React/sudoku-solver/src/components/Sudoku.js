@@ -151,12 +151,13 @@ export class Sudoku extends React.Component {
         let startVal = 0;
         c = emptyCells[0];
         let idx = 0;
-        while (idx !== emptyCells.length){
+        while ( (idx !== emptyCells.length) && (this.getEmptyPositions(newBoard) > 0)){
             // Find a value between 1 and 9 to fill this cell
-            for (let i = startVal + 1 ; i < 10 ; i++){
+            for (let i = +startVal + 1 ; i < 10 ; i++){
                 valueFound = this.sudokuCondition(c,i);
                 if (valueFound){
-                    c.value = i;
+                    c.value = i.toString();
+                    this.updateMarkers(c,newBoard)
                     break; // Break: for (let i = startVal + 1 ; i < 10 ; i++)
                 }
             }
@@ -248,7 +249,7 @@ export class Sudoku extends React.Component {
 
     solve() {
 //     while (this.getEmptyPositions(this.state.board) >0 ){
-        if (this.state.board.mode != 'SOLVED'){
+        if (this.state.board.mode !== 'SOLVED'){
             this.state.board.forEach(c => {
                 if (c.value !== ""){
                     c.start = true;
@@ -287,7 +288,7 @@ export class Sudoku extends React.Component {
         let cells = this.getAffectedCells(cell).filter(c => c.value);
         // Check if affected cells contain value you want to add
         for (const c of cells){
-            if (c.value === value){
+            if (c.value === value.toString()){
                 return false;
             }
         }
@@ -300,7 +301,7 @@ export class Sudoku extends React.Component {
         if ( (result && result <= 9 && result>0) || e.target.value === ''){
 
             let newBoard = this.state.board.slice();
-            newBoard[num].value = result;
+            newBoard[num].value = result.toString();
             if (this.solutionBoard){
                newBoard[num].correct = (+result === this.solutionBoard[num].value);
             }
@@ -355,7 +356,7 @@ export class Sudoku extends React.Component {
     render() {
         let emptyCellPositions = this.getEmptyPositions(this.state.board);
         return (
-        <div className="container mx-auto mt-3 font-thin">
+        <div className="container mx-auto mt-3 mr-1 font-thin">
                     <Header emptyPositions={emptyCellPositions}/>
                     <Button label="Create Sudoku" onClick={()=>this.create_sudoku()} image={<BsFillPencilFill className="inline-block "/>}/>
                     <Button label="Restart current game" onClick={()=>this.restart_sudoku()} render={!this.originalBoard} />
