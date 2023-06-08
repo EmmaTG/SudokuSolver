@@ -111,7 +111,6 @@ export class Sudoku extends React.Component {
     create_sudoku() {
 
         let newBoard = this.state.board.slice();
-        this.setState({mode:"CREATED"});
         newBoard.forEach(x => {x.value = ''; x.start = 0; x.correct = 1;});
 
         // 1. fill boxes 0, 4 and 8 with number 1-9
@@ -129,7 +128,8 @@ export class Sudoku extends React.Component {
         });
 
         let stateObj = {
-            board: newBoard
+            board: newBoard,
+            mode:"CREATED"
             };
         // 2. simplySolve the sudoku
         this.simplySolve(stateObj);
@@ -141,7 +141,9 @@ export class Sudoku extends React.Component {
         this.originalBoard.forEach(x => x.start = x.value !== "");
         this.solutionBoard.forEach((x,num) => x.start = this.originalBoard[num].start);
         // 4. display sudoku
+        stateObj.mode = "CREATED"
         this.setState(stateObj);
+        this.setState({mode:"CREATED"});
     }
 
     simplySolve(stateValues) {
@@ -247,7 +249,7 @@ export class Sudoku extends React.Component {
         let cellsInROI = getCellsFunc(rowNum);
         for (const c_num of cellsInROI) {
             let cell = this.state.board[c_num]
-            if (cell.value === "") {
+            if (cell.value.toString() === '') {
                 let allowedNumbers = this.getAllowedNumbers(cell);
                 if (allowedNumbers.length === 1){
                     cell.value = allowedNumbers[0].toString();
@@ -326,7 +328,7 @@ export class Sudoku extends React.Component {
                     alert("You have " + numberIncorrect + " incorrect entries!!");
                 }
             }
-            this.setState({board:newBoard,mode:boardMode});
+            this.setState({board:newBoard, mode: boardMode});
         }
         this.updateMarkers(this.state.board[num],this.state.board);
 
@@ -339,7 +341,7 @@ export class Sudoku extends React.Component {
     }
 
     restart_sudoku(){
-        this.setState({board: JSON.parse(JSON.stringify(this.originalBoard)), mode:'INPUT'});
+        this.setState({board: JSON.parse(JSON.stringify(this.originalBoard))});
     }
 
     reset(){
@@ -354,8 +356,8 @@ export class Sudoku extends React.Component {
         let currentBoard = this.state.board.slice();
         for (let i = 0; i < currentBoard.length; i++){
             let cell = currentBoard[i];
-            if (!cell.start && cell.value !== ""){
-                cell.correct = (+cell.value === this.solutionBoard[i].value);
+            if (!cell.start && cell.value.toString() !== ""){
+                cell.correct = (cell.value === this.solutionBoard[i].value);
             }
         }
         this.setState({board: currentBoard, mode:"CHECK"})
@@ -373,7 +375,7 @@ export class Sudoku extends React.Component {
                     <Button label="Create Sudoku" onClick={()=>this.create_sudoku()} image={<BsFillPencilFill className="inline-block "/>}/>
                     <Button label="Restart current game" onClick={()=>this.restart_sudoku()} render={!this.originalBoard} />
                     <Button label="Clear all" onClick={()=>this.reset()} render={emptyCellPositions >= 81} />
-                    <Button label="Solve" onClick={()=>this.solve()} render={(emptyCellPositions >= 81) && (this.state.mode !== "CREATED")} />
+                    <Button label="Solve" onClick={()=>this.solve()} render={(emptyCellPositions >= 81)} />
                     <Board
                         cells={this.state.board}
                         mode={this.state.mode}
