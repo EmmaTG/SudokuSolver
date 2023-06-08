@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="Fixed bug when creating sudoku">
+    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="Fixed 'checking' bug">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/React/sudoku-solver/src/components/Sudoku.js" beforeDir="false" afterPath="$PROJECT_DIR$/React/sudoku-solver/src/components/Sudoku.js" afterDir="false" />
     </list>
@@ -462,7 +462,14 @@
       <option name="project" value="LOCAL" />
       <updated>1686234393950</updated>
     </task>
-    <option name="localTasksCounter" value="34" />
+    <task id="LOCAL-00034" summary="Fixed 'checking' bug">
+      <created>1686236184195</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1686236184195</updated>
+    </task>
+    <option name="localTasksCounter" value="35" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -522,7 +529,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="INCLUDE_TEXT_INTO_SHELF" value="false" />
-    <MESSAGE value="Added create sudoku button" />
     <MESSAGE value="Created sudoku now symmetrical" />
     <MESSAGE value="Code cleanup and update" />
     <MESSAGE value="Code cleanup" />
@@ -547,7 +553,8 @@
     <MESSAGE value="implemented candidate check for solving algorithm" />
     <MESSAGE value="Fixed bug when solving inputed sudoku" />
     <MESSAGE value="Fixed bug when creating sudoku" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed bug when creating sudoku" />
+    <MESSAGE value="Fixed 'checking' bug" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed 'checking' bug" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>

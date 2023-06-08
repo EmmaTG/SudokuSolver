@@ -36,6 +36,7 @@ export class Sudoku extends React.Component {
     resetVariables(){
         this.originalBoard = null;
         this.solutionBoard = null;
+        this.typeOfSolution = null
 
         this.columnMarkups = this.initialMarkups();
         this.rowMarkups = this.initialMarkups();
@@ -109,7 +110,7 @@ export class Sudoku extends React.Component {
     }
 
     create_sudoku() {
-
+        this.typeOfSolution = "CREATED"
         let newBoard = this.state.board.slice();
         newBoard.forEach(x => {x.value = ''; x.start = 0; x.correct = 1;});
 
@@ -375,12 +376,12 @@ export class Sudoku extends React.Component {
                     <Button label="Create Sudoku" onClick={()=>this.create_sudoku()} image={<BsFillPencilFill className="inline-block "/>}/>
                     <Button label="Restart current game" onClick={()=>this.restart_sudoku()} render={!this.originalBoard} />
                     <Button label="Clear all" onClick={()=>this.reset()} render={emptyCellPositions >= 81} />
-                    <Button label="Solve" onClick={()=>this.solve()} render={(emptyCellPositions >= 81)} />
+                    <Button label="Solve" onClick={()=>this.solve()} render={(emptyCellPositions >= 81) || this.typeOfSolution === "CREATED"} />
                     <Board
                         cells={this.state.board}
                         mode={this.state.mode}
                         onChange={(e,num) => this.handleChange(e,num)}/>
-                    <Button label="Show solution" onClick={()=>this.handleShowSolution()} render={!this.solutionBoard} />
+                    <Button label="Show solution" onClick={()=>this.handleShowSolution()} render={!this.solutionBoard || this.typeOfSolution !== "CREATED"} />
                     <Button label="Check" onClick={()=>this.check()} render={!this.solutionBoard}  />
         </div>
                 )
