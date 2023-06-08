@@ -55,7 +55,7 @@ export class Sudoku extends React.Component {
     /*
     Get affected cells in by the addition of a value current cell curCell
     */
-    getAffectedCells(curCell){
+    getAffectedCells(curCell, board){
         const {row, col, box} = numberToLocation(curCell.cellIndex);
 
         let affectedCellNums = getCellsFromRow(row);
@@ -65,9 +65,9 @@ export class Sudoku extends React.Component {
         affectedCellNums = affectedCellNums.filter((x,idx) => {return affectedCellNums.indexOf(x) === idx})
 
         let affectedCells = [];
-        let newBoard = this.state.board.slice();
+//        let newBoard = this.state.board.slice();
         for (const c of affectedCellNums) {
-            affectedCells.push(newBoard[c]);
+            affectedCells.push(board[c]);
         }
 
         return affectedCells;
@@ -76,6 +76,8 @@ export class Sudoku extends React.Component {
     updateMarkers(cell, newBoard) {
         // Get values of cells in box, get values of col cells, get values of row cells
         // if value, remove value from cell markup
+
+        cell.markups = []
 
         let idxLocation;
         const {row, col, box} = numberToLocation(cell.cellIndex);
@@ -89,12 +91,16 @@ export class Sudoku extends React.Component {
         idxLocation = this.columnMarkups[col].indexOf(+cell.value);
         this.columnMarkups[col].splice(idxLocation,1);
 
-        let affectingCells = this.getAffectedCells(cell);
+        let affectingCells = this.getAffectedCells(cell, newBoard);
 
         for (let c of affectingCells) {
-            const idx = c.markups.indexOf(+cell.value);
-            if (idx !== -1){
-                c.markups.splice(idx,1);
+            if (c.value.toString() === ''){
+                const idx = c.markups.indexOf(+cell.value);
+                if (idx !== -1){
+                    c.markups.splice(idx,1);
+                }
+            } else {
+                c.markups = [];
             }
         }
 
@@ -105,6 +111,7 @@ export class Sudoku extends React.Component {
     create_sudoku() {
 
         let newBoard = this.state.board.slice();
+        this.setState({mode:"CREATED"});
         newBoard.forEach(x => {x.value = ''; x.start = 0; x.correct = 1;});
 
         // 1. fill boxes 0, 4 and 8 with number 1-9
@@ -113,9 +120,11 @@ export class Sudoku extends React.Component {
             for(const c of cells) {
                 let cell = newBoard[c];
                 const markupSize = cell.markups.length;
-                const randomNumber = Math.floor(Math.random() * markupSize);
-                cell.value = cell.markups[randomNumber];
-                this.updateMarkers(cell,newBoard);
+                if (markupSize>0) {
+                    const randomNumber = Math.floor(Math.random() * markupSize);
+                    cell.value = cell.markups[randomNumber].toString();
+                    this.updateMarkers(cell,newBoard);
+                }
             }
         });
 
@@ -154,7 +163,7 @@ export class Sudoku extends React.Component {
         while ( (idx !== emptyCells.length) && (this.getEmptyPositions(newBoard) > 0)){
             // Find a value between 1 and 9 to fill this cell
             for (let i = +startVal + 1 ; i < 10 ; i++){
-                valueFound = this.sudokuCondition(c,i);
+                valueFound = this.sudokuCondition(c,i, newBoard);
                 if (valueFound){
                     c.value = i.toString();
                     this.updateMarkers(c,newBoard)
@@ -164,9 +173,12 @@ export class Sudoku extends React.Component {
             // If no value can be put in this position
             if(!valueFound) {
                 if (idx !== 0) { // And its not the first cell
+                    const old_val = +c.value
+                    c.markups.push(old_val)
                     c.value = "";
                     idx--;
                     c = emptyCells[idx]
+                    c.markups.push(old_val)
                     startVal = c.value;
                 } else {
                     break // Break: while (idx != emptyCells.length)
@@ -284,8 +296,8 @@ export class Sudoku extends React.Component {
         }
     }
 
-    sudokuCondition(cell,value) {
-        let cells = this.getAffectedCells(cell).filter(c => c.value);
+    sudokuCondition(cell,value, board) {
+        let cells = this.getAffectedCells(cell, board).filter(c => c.value);
         // Check if affected cells contain value you want to add
         for (const c of cells){
             if (c.value === value.toString()){
@@ -360,8 +372,8 @@ export class Sudoku extends React.Component {
                     <Header emptyPositions={emptyCellPositions}/>
                     <Button label="Create Sudoku" onClick={()=>this.create_sudoku()} image={<BsFillPencilFill className="inline-block "/>}/>
                     <Button label="Restart current game" onClick={()=>this.restart_sudoku()} render={!this.originalBoard} />
-                    <Button label="Clear all" onClick={()=>this.reset()} render={emptyCellPositions>=81} />
-                    <Button label="Solve" onClick={()=>this.solve()} render={emptyCellPositions>=81} />
+                    <Button label="Clear all" onClick={()=>this.reset()} render={emptyCellPositions >= 81} />
+                    <Button label="Solve" onClick={()=>this.solve()} render={(emptyCellPositions >= 81) && (this.state.mode !== "CREATED")} />
                     <Board
                         cells={this.state.board}
                         mode={this.state.mode}
