@@ -372,7 +372,7 @@ export class Sudoku extends React.Component {
         let emptyCellPositions = this.getEmptyPositions(this.state.board);
         return (
         <div className="container" >
-        <div className="mt-5 ml-5 font-thin">
+        <div className="mt-5 ml-5 mb-5 font-thin">
                     <Header emptyPositions={emptyCellPositions}/>
                     <Button label="Create Sudoku" onClick={()=>this.create_sudoku()} image={<BsFillPencilFill className="inline-block "/>}/>
                     <Button label="Restart current game" onClick={()=>this.restart_sudoku()} render={!this.originalBoard} />
