@@ -25,14 +25,14 @@ export function Cell(props) {
        fontStyle += " border-t-2 border-t-black ";
     }
 
-    let classN = "border-l-2 border-b-2 w-10 h-15 "+ fontStyle;
+    let classN = "border-l-2 border-b-2 "+ fontStyle;
     return (
        <input
        className={classN}
        type="text"
        key="this.props.details.cellIndex"
        value={props.details.value}
-       style={{background: fontStyle}}
+       style={{background: fontStyle, width:"4vw", height:"4vw", fontSize:"3vw", textAlign:'center'}}
        readOnly={props.details.start || props.mode==='SOLVED'}
        onInput={(e) => props.onChange(e,props.details.cellIndex)}
        >

@@ -371,7 +371,8 @@ export class Sudoku extends React.Component {
     render() {
         let emptyCellPositions = this.getEmptyPositions(this.state.board);
         return (
-        <div className="container mx-auto mt-3 mr-1 font-thin">
+        <div className="container" >
+        <div className="mt-5 ml-5 font-thin"}>
                     <Header emptyPositions={emptyCellPositions}/>
                     <Button label="Create Sudoku" onClick={()=>this.create_sudoku()} image={<BsFillPencilFill className="inline-block "/>}/>
                     <Button label="Restart current game" onClick={()=>this.restart_sudoku()} render={!this.originalBoard} />
@@ -383,6 +384,7 @@ export class Sudoku extends React.Component {
                         onChange={(e,num) => this.handleChange(e,num)}/>
                     <Button label="Show solution" onClick={()=>this.handleShowSolution()} render={!this.solutionBoard || this.typeOfSolution !== "CREATED"} />
                     <Button label="Check" onClick={()=>this.check()} render={!this.solutionBoard}  />
+                    </div>
         </div>
                 )
     }
